@@ -1,0 +1,31 @@
+# Build output
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+*.o
+*.obj
+*.exe
+*.out
+
+# SQLite databases (never commit real learner data)
+*.db
+*.sqlite
+*.sqlite3
+
+# Secrets / credentials
+.env
+*.env
+*.key
+*.pem
+*.pfx
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Office temp lock files and not-for-submission drafts
+~$*
+*NOT-FOR-SUBMISSION*
