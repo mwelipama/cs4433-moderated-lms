@@ -74,8 +74,9 @@ CREATE TABLE marks (
     submission_id INTEGER NOT NULL UNIQUE REFERENCES submissions(submission_id),
     raw_mark      INTEGER NOT NULL CHECK (raw_mark >= 0),
     awarded_mark  INTEGER NOT NULL CHECK (awarded_mark >= 0),
-    feedback      TEXT    NOT NULL,
-    released      INTEGER NOT NULL DEFAULT 0 CHECK (released IN (0,1))
+    feedback      TEXT    NOT NULL
+    -- Release is NOT stored here: visibility to students is derived from
+    -- submissions.state = 'RELEASED' (the single authoritative release state).
 );
 
 -- Append-only audit trail of mark-affecting actions
@@ -88,7 +89,13 @@ CREATE TABLE audit_events (
     old_value      INTEGER,                         -- NULL only for INITIAL
     new_value      INTEGER NOT NULL,
     reason         TEXT    NOT NULL,
-    CHECK ( (event_type = 'INITIAL') = (old_value IS NULL) )
+    CHECK ( (event_type = 'INITIAL') = (old_value IS NULL) ),
+    -- Reason semantics (FR-17): INITIAL is the fixed system text; CHANGE and
+    -- MODERATION_CHANGE require a non-empty, non-whitespace user-entered reason.
+    CHECK (
+        (event_type = 'INITIAL' AND reason = 'Initial mark entry')
+        OR (event_type IN ('CHANGE','MODERATION_CHANGE') AND length(trim(reason)) > 0)
+    )
 );
 
 -- Enforce audit immutability (append-only) at the database level

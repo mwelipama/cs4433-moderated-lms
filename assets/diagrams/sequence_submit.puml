@@ -19,13 +19,13 @@ alt t <= D_e (on time)
   end
   SS --> UI : OK (Submitted)
 else t > D_e
-  alt existing on-time submission
-    SS --> UI : refused (on-time preserved)
+  alt existing submission (on-time or late)
+    SS --> UI : refused; existing submission preserved
   else none and t <= cutoff
-    SS -> Repo : insert(content, t) [state=Late]
+    SS -> Repo : insert(content, t) [state=Late]  (first late submission)
     SS --> UI : OK (Late, d days)
-  else t > cutoff
-    SS --> UI : refused (mark = 0)
+  else none and t > cutoff
+    SS --> UI : refused (mark = 0, not submitted)
   end
 end
 UI --> Student : result

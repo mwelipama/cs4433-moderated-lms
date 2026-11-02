@@ -74,7 +74,6 @@ class Mark {
   -rawMark: int
   -awardedMark: int
   -feedback: string
-  -released: bool
 }
 class AuditEvent {
   -auditId: int

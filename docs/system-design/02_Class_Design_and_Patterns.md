@@ -6,7 +6,7 @@
 
 ## 1. Domain model overview
 
-An abstract `User` holds the common account state (id, username, password hash, display name, active flag) and a pure-virtual `role()`; `Administrator`, `Lecturer`, `HeadOfDepartment` (adds `departmentId`) and `Student` specialise it — satisfying the required abstract-`User`-with-inheritance-and-polymorphism design. `Department`, `Course`, `Assignment` and `Extension` model the academic structure; `Submission` carries the lifecycle `state` and the behaviour `effectiveDeadline()` and `daysLate()`; `Mark` holds the raw and awarded marks, feedback and the released flag; `AuditEvent` records each mark-affecting action. Enumerations `Role`, `SubmissionState` and `AuditEventType` are first-class types in the design and map to constrained `TEXT` columns in the schema.
+An abstract `User` holds the common account state (id, username, password hash, display name, active flag) and a pure-virtual `role()`; `Administrator`, `Lecturer`, `HeadOfDepartment` (adds `departmentId`) and `Student` specialise it — satisfying the required abstract-`User`-with-inheritance-and-polymorphism design. `Department`, `Course`, `Assignment` and `Extension` model the academic structure; `Submission` carries the lifecycle `state` and the behaviour `effectiveDeadline()` and `daysLate()`; `Mark` holds the raw and awarded marks and feedback (a mark's visibility is derived from its submission's `RELEASED` state, not stored on the mark); `AuditEvent` records each mark-affecting action. Enumerations `Role`, `SubmissionState` and `AuditEventType` are first-class types in the design and map to constrained `TEXT` columns in the schema.
 
 ## 2. Design patterns (justified)
 

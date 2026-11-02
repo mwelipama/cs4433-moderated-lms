@@ -54,7 +54,6 @@
 | | raw_mark | INTEGER | NOT NULL, CHECK ≥ 0 | Lecturer's raw mark R |
 | | awarded_mark | INTEGER | NOT NULL, CHECK ≥ 0 | Awarded mark A (after penalty / moderation) |
 | | feedback | TEXT | NOT NULL | Written feedback |
-| | released | INTEGER | NOT NULL, CHECK in (0,1) | Visible to student |
 | audit_events | audit_id | INTEGER | PK | Audit entry identifier |
 | | mark_id | INTEGER | NOT NULL, FK→marks | Mark affected |
 | | event_type | TEXT | NOT NULL, CHECK in (INITIAL,CHANGE,MODERATION_CHANGE) | Kind of action |
@@ -64,7 +63,7 @@
 | | new_value | INTEGER | NOT NULL | New awarded value |
 | | reason | TEXT | NOT NULL | System text (INITIAL) or user-entered reason |
 
-Integrity highlights: `CHECK ((event_type='INITIAL') = (old_value IS NULL))` ties the audit model to the schema; triggers `audit_no_update` / `audit_no_delete` make `audit_events` append-only (NFR-07).
+Integrity highlights: `CHECK ((event_type='INITIAL') = (old_value IS NULL))` ties the audit model to the schema; triggers `audit_no_update` / `audit_no_delete` make `audit_events` append-only (NFR-07). A second `CHECK` enforces the reason rules — INITIAL must be exactly `Initial mark entry`, and CHANGE/MODERATION_CHANGE must have a non-empty, non-whitespace reason (FR-17). **Release is represented solely by `submissions.state = 'RELEASED'`; marks carry no separate released flag (single source of truth).** The schema has been validated against SQLite (see [database/validate_schema.py](../../database/validate_schema.py)): it applies cleanly, valid data is accepted, and every constraint rejects its matching invalid case (bad role/state, wrong/empty/whitespace audit reason, non-null INITIAL old value, append-only UPDATE/DELETE, duplicate submission, non-positive max mark).
 
 ## 3. Class-to-database mapping
 
@@ -76,6 +75,7 @@ Integrity highlights: `CHECK ((event_type='INITIAL') = (old_value IS NULL))` tie
 | `Role`, `SubmissionState`, `AuditEventType` enums | `TEXT` + `CHECK` | Enumerations enforced as constrained text. |
 | `Submission.daysLate()`, `effectiveDeadline()` | (not stored) | Computed from `submitted_at`, `deadline` and any extension — keeps 3NF. |
 | `PenaltyPolicy`/`StandardPenaltyPolicy`, services, repositories, `UserFactory`, `PasswordHasher`, `Clock` | (not persisted) | Behavioural/infrastructure types; no tables. |
+| Mark visibility / release | `submissions.state` | **No stored column on `marks`.** A mark is visible to its student exactly when its submission's `state` is `RELEASED`. Moderation (mark update + audit event + state change) and release each run inside a single transaction so they commit atomically. Release is partial — only `Moderated` submissions are released. |
 
 ## 4. Runtime and portability (no manual SQL, no database server)
 

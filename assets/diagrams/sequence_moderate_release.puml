@@ -15,6 +15,7 @@ loop each mark
   alt HoD changes mark
     HoD -> UI : adjust(markId, newValue, reason)
     UI -> MOD : adjust(hodId, markId, newValue, reason)
+    note over MOD : atomic transaction
     MOD -> MRepo : update(markId, newValue)
     MOD -> AUD : record(MODERATION_CHANGE, old, new, reason)
     MOD -> SRepo : setState(Moderated)
@@ -27,6 +28,10 @@ loop each mark
 end
 HoD -> UI : release(assignmentId)
 UI -> MOD : release(assignmentId)
-MOD -> SRepo : setState(Released)
+note over MOD
+  partial release: only submissions already in
+  Moderated state are released; others untouched
+end note
+MOD -> SRepo : setState(Released) for Moderated submissions
 MOD --> UI : released (visible to students)
 @enduml

@@ -65,7 +65,6 @@ entity marks {
   * raw_mark : INTEGER
   * awarded_mark : INTEGER
   * feedback : TEXT
-  * released : INTEGER
 }
 entity audit_events {
   * audit_id : INTEGER <<PK>>

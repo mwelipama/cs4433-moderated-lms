@@ -8,8 +8,8 @@ start
 if (timestamp <= D_e ?) then (on time)
   :Record submission (state = Submitted);
 else (after D_e)
-  if (existing on-time submission ?) then (yes)
-    :Refuse; preserve on-time submission;
+  if (existing submission (any) ?) then (yes)
+    :Refuse; preserve existing submission;
     stop
   else (none)
     if (within cutoff ?) then (yes)

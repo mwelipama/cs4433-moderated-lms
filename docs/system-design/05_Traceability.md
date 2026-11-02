@@ -18,7 +18,7 @@ Each accepted requirement is traced to the design elements that realise it (clas
 | FR-11, FR-12, FR-18, FR-21, C2, C6, C7 | UC-10 | SubmissionService; `Submission` (state, daysLate) | Fig 4, 5, 6a | submissions |
 | FR-13 | UC-08 | MarkingService; PenaltyPolicy/StandardPenaltyPolicy (Strategy) | Fig 3, 5 | marks |
 | FR-14 | UC-08 | MarkingService; Mark | Fig 5, 6a | marks |
-| FR-15, FR-16 | UC-12/13 | ModerationService; Mark.released | Fig 4, 5, 6b | marks |
+| FR-15, FR-16 | UC-12/13 | ModerationService; `submissions.state = RELEASED` (authoritative) | Fig 4, 5, 6b | submissions, marks |
 | FR-17 (INITIAL/CHANGE/MODERATION_CHANGE) | UC-08, UC-12/13 | AuditService; AuditEvent | Fig 4, 5, 6b | audit_events (+ triggers) |
 | FR-18 | UC-10, UC-08, UC-12/13 | `SubmissionState`; state-machine transitions | Fig 4 | submissions.state |
 | FR-19 | all | input validation in services; exception handling | — | — |
