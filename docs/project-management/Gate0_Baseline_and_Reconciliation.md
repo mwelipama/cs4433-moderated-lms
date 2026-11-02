@@ -72,7 +72,7 @@ This is the governing scheme. See Conflict #2 — it differs from the summary ta
 The official brief (sec.7) specifies a single report of 6,000–8,000 words in 14 prescribed sections. The lecturer's **latest instruction is 4–5 pages**, and the owner has ruled it **supersedes** the 6,000–8,000-word requirement for the final report. *Caveat:* retain the lecturer's 4–5 page instruction **in writing** if available, as evidence it supersedes the brief. The report therefore follows the **concise-report + GitHub-evidence model**: a tight 4–5 page report that keeps the required 14-section structure in condensed form and links to the full SRS, design, test and evidence artefacts hosted in the repo. The full artefacts are still produced — the P2–P8 marks depend on the artefacts, not the page count.
 
 **Conflict #2 — Mark weightings (resolve: official PDF governs).**
-The summary table in the working brief shows V&V **15**, "Deployment and Maintenance" combined **6**, Ethics **4**. The official PDF shows V&V **12**, Deployment **4** + Maintenance **6** (separate), Ethics **3**. Both sum to 100 but allocate effort differently. *Adopting the official PDF scheme* (sec.2 above) unless you say otherwise.
+The summary table in the working brief shows V&V **15**, "Deployment and Maintenance" combined **6**, Ethics **4**. The official PDF shows V&V **12**, Deployment **4** + Maintenance **6** (separate), Ethics **3**. Both sum to 100 but allocate effort differently. The official PDF's mark allocation is authoritative and governs this project.
 
 **Conflict #3 — Submission package.**
 Official PDF: one PDF report + Git link. Latest guidance: GitHub as the primary evidence store with a concise report. Reconciled under Decision #1; GitHub will hold all detailed evidence either way.
@@ -106,7 +106,7 @@ These are intrinsic to the case study and are Gate 1 (Requirements) work:
 
 ---
 
-## 7. Proposed execution order and the one blocker
+## 7. Proposed execution order and gate conditions
 
 Order follows the brief's Waterfall gates: **G1 Requirements -> G2 Design (lock) -> G3 Implementation -> G4 V&V -> G5 CM/QA -> G6 Deployment (v1.0) -> G7 Maintenance (v1.1) -> G8 Report + Ethics + traceability**. CM/QA groundwork (CI skeleton) can begin in parallel once there is code to build.
 
