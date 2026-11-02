@@ -79,15 +79,16 @@ Three use cases are specified in full below, including **Submit Assignment** as 
   4. The system validates R's range and that feedback is non-empty (FR-14).
   5. **If the submission is Late, `<<extend>>` Apply Late Penalty:** the system computes `A = clamp(R − 0.10·M·d, 0, M)` rounded to the nearest whole mark (FR-13). If on time, `A = R`.
   6. The system stores R, A and feedback and sets the state to **Marked** (FR-18).
-  7. **`<<include>>` Record Mark Audit Event:** on the first mark the system writes an **INITIAL** event (old value empty, new value A, acting lecturer, timestamp, reason); on a re-mark it writes a **CHANGE** event (old A → new A, reason) (FR-17).
+  7. **`<<include>>` Record Mark Audit Event:** on the first mark the system writes an **INITIAL** event with a **system-generated reason** ("Initial mark entry"), old value empty, new value A, acting lecturer and timestamp. On a re-mark (see 3a) it writes a **CHANGE** event carrying the **lecturer-entered reason**, old A → new A (FR-17).
   8. The mark remains invisible to the student until release (FR-16).
 - **Alternative flows:**
-  - *3a. Re-marking an already-marked submission (before release):* permitted; step 7 writes a **CHANGE** event with the previous A as the old value.
+  - *3a. Re-marking an already-marked submission (before release):* permitted; before saving, the system requires the lecturer to enter a **reason** for the change; step 7 then writes a **CHANGE** event with the previous A as the old value and that reason. (The first mark needs no reason — its INITIAL reason is system-generated.)
 - **Exception flows:**
   - *E1. R out of range or feedback empty:* rejected and re-entered (FR-14, FR-19).
   - *E2. Lecturer not assigned to the course:* refused (FR-02).
-  - *E3. Data-access error:* caught and reported; no partial write (NFR-06).
-- **Postconditions:** The submission is **Marked** with raw mark R, awarded mark A and feedback; exactly one audit event (INITIAL or CHANGE) exists for this action; the student still sees nothing (FR-16).
+  - *E3. Re-mark with an empty reason:* rejected; the revised mark is not saved until a reason is provided (FR-17).
+  - *E4. Data-access error:* caught and reported; no partial write (NFR-06).
+- **Postconditions:** The submission is **Marked** with raw mark R, awarded mark A and feedback; exactly one audit event (INITIAL with a system reason, or CHANGE with the lecturer's reason) exists for this action; the student still sees nothing (FR-16).
 - **Business rules:** FR-13 (penalty at marking), FR-14 (range + feedback), FR-16 (no early visibility), FR-17 (INITIAL/CHANGE audit).
 
 ### UC-12/13 — Moderate and Release Marks
