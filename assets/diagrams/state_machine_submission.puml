@@ -1,0 +1,17 @@
+@startuml
+title Figure 4. Submission Lifecycle State Machine
+[*] --> Submitted : submit on time (t <= D_e)
+[*] --> Late : first submit after D_e, within cutoff
+Submitted --> Submitted : resubmit before D_e (replaces)
+Submitted --> Marked : lecturer marks
+Late --> Marked : lecturer marks (penalty applied)
+Marked --> Marked : lecturer re-marks (CHANGE audit)
+Marked --> Moderated : HoD moderates\n(change: MODERATION_CHANGE audit;\nno change: no audit)
+Moderated --> Released : HoD releases
+Released --> [*]
+note right of Late
+  After cutoff (D_e + 72h) no
+  submission is accepted; if none
+  exists the mark is 0 (not submitted).
+end note
+@enduml

@@ -1,0 +1,47 @@
+@startuml
+title Figure 5. Activity Diagram (swimlanes): submission to released mark
+|Student|
+start
+:Select assignment;
+:Submit work;
+|System|
+if (timestamp <= D_e ?) then (on time)
+  :Record submission (state = Submitted);
+else (after D_e)
+  if (existing on-time submission ?) then (yes)
+    :Refuse; preserve on-time submission;
+    stop
+  else (none)
+    if (within cutoff ?) then (yes)
+      :Record submission (state = Late), store lateness;
+    else (after cutoff)
+      :Reject; mark = 0 (not submitted);
+      stop
+    endif
+  endif
+endif
+|Lecturer|
+:Enter raw mark R and feedback;
+|System|
+if (state = Late ?) then (yes)
+  :Apply penalty A = clamp(R - 0.10*M*d, 0, M);
+else (on time)
+  :A = R;
+endif
+:state = Marked;
+:Write audit (INITIAL first time, else CHANGE);
+|Head of Department|
+:Review marks;
+if (adjust mark ?) then (yes)
+  :Enter new value and reason;
+  :Write MODERATION_CHANGE audit; state = Moderated;
+else (no change)
+  :state = Moderated (no audit);
+endif
+:Release marks;
+|System|
+:state = Released; make visible to student;
+|Student|
+:View released mark and feedback;
+stop
+@enduml

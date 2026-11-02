@@ -1,0 +1,64 @@
+@startuml
+title Figure 2. Component Diagram - Layered Architecture
+skinparam componentStyle rectangle
+skinparam shadowing false
+package "Presentation (Console)" {
+  [Login Menu] as LM
+  [Admin Menu] as AM
+  [Lecturer Menu] as LecM
+  [HoD Menu] as HM
+  [Student Menu] as SM
+}
+package "Application Services (Business Logic)" {
+  [AuthService] as AUTH
+  [UserService] as US
+  [CourseService] as CS
+  [AssignmentService] as AS
+  [SubmissionService] as SS
+  [MarkingService] as MS
+  [ModerationService] as MOD
+  [AuditService] as AUD
+}
+package "Domain Model" {
+  [User hierarchy] as DOMU
+  [Course / Assignment] as DOMC
+  [Submission / Mark / AuditEvent] as DOMS
+  [PenaltyPolicy «strategy»] as PP
+}
+package "Data Access (Repository / DAO)" {
+  [IUserRepository] as RU
+  [ICourseRepository] as RC
+  [IAssignmentRepository] as RA
+  [ISubmissionRepository] as RS
+  [IMarkRepository] as RM
+  [IAuditRepository] as RAUD
+}
+package "Infrastructure" {
+  database "SQLite" as DB
+  [PasswordHasher (libsodium)] as PH
+  [Clock] as CLK
+}
+LM --> AUTH
+AM --> US
+AM --> CS
+LecM --> AS
+LecM --> MS
+SM --> SS
+HM --> MOD
+AUTH --> RU
+AUTH --> PH
+MS --> PP
+MS --> RM
+MS --> AUD
+MOD --> RM
+MOD --> AUD
+SS --> RS
+SS --> CLK
+AUD --> RAUD
+RU ..> DB
+RC ..> DB
+RA ..> DB
+RS ..> DB
+RM ..> DB
+RAUD ..> DB
+@enduml

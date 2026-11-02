@@ -1,0 +1,143 @@
+@startuml
+title Figure 3. Design-level Class Diagram
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+enum Role {
+  ADMIN
+  LECTURER
+  HOD
+  STUDENT
+}
+enum SubmissionState {
+  SUBMITTED
+  LATE
+  MARKED
+  MODERATED
+  RELEASED
+}
+enum AuditEventType {
+  INITIAL
+  CHANGE
+  MODERATION_CHANGE
+}
+
+abstract class User {
+  -userId: int
+  -username: string
+  -passwordHash: string
+  -displayName: string
+  -active: bool
+  +{abstract} role(): Role
+  +isActive(): bool
+}
+class Administrator
+class Lecturer
+class HeadOfDepartment {
+  -departmentId: int
+}
+class Student
+User <|-- Administrator
+User <|-- Lecturer
+User <|-- HeadOfDepartment
+User <|-- Student
+
+class Department {
+  -deptId: int
+  -name: string
+}
+class Course {
+  -courseId: int
+  -code: string
+  -title: string
+}
+class Assignment {
+  -assignmentId: int
+  -title: string
+  -deadline: datetime
+  -maxMark: int
+}
+class Extension {
+  -extendedDeadline: datetime
+}
+class Submission {
+  -submissionId: int
+  -content: string
+  -submittedAt: datetime
+  -state: SubmissionState
+  +effectiveDeadline(ext): datetime
+  +daysLate(deadline): int
+}
+class Mark {
+  -markId: int
+  -rawMark: int
+  -awardedMark: int
+  -feedback: string
+  -released: bool
+}
+class AuditEvent {
+  -auditId: int
+  -type: AuditEventType
+  -eventTime: datetime
+  -oldValue: int
+  -newValue: int
+  -reason: string
+}
+
+Department "1" -- "*" Course
+Course "1" -- "*" Assignment
+Course "*" -- "*" Lecturer : teaches
+Course "*" -- "*" Student : enrols
+Assignment "1" -- "*" Submission
+Student "1" -- "*" Submission
+Assignment "1" -- "*" Extension
+Student "1" -- "*" Extension
+Submission "1" -- "1" Mark
+Mark "1" -- "*" AuditEvent
+AuditEvent "*" --> "1" User : actingUser
+
+interface PenaltyPolicy <<strategy>> {
+  +penalty(rawMark, maxMark, daysLate): int
+}
+class StandardPenaltyPolicy
+PenaltyPolicy <|.. StandardPenaltyPolicy
+
+interface IUserRepository <<repository>>
+interface ISubmissionRepository <<repository>>
+interface IMarkRepository <<repository>>
+interface IAuditRepository <<repository>>
+class SqliteUserRepository
+class SqliteSubmissionRepository
+class SqliteMarkRepository
+class SqliteAuditRepository
+IUserRepository <|.. SqliteUserRepository
+ISubmissionRepository <|.. SqliteSubmissionRepository
+IMarkRepository <|.. SqliteMarkRepository
+IAuditRepository <|.. SqliteAuditRepository
+
+class UserFactory <<factory>> {
+  +create(role, data): User
+}
+UserFactory ..> User : creates
+
+class AuthService
+class SubmissionService
+class MarkingService
+class ModerationService
+class AuditService
+class PasswordHasher {
+  +hash(pw): string
+  +verify(pw, hash): bool
+}
+
+AuthService ..> IUserRepository
+AuthService ..> PasswordHasher
+SubmissionService ..> ISubmissionRepository
+MarkingService ..> IMarkRepository
+MarkingService ..> PenaltyPolicy
+MarkingService ..> AuditService
+ModerationService ..> IMarkRepository
+ModerationService ..> AuditService
+AuditService ..> IAuditRepository
+@enduml

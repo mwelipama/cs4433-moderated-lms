@@ -1,0 +1,95 @@
+@startuml
+title Figure 7. Entity-Relationship Diagram (3NF)
+skinparam linetype ortho
+hide circle
+skinparam shadowing false
+
+entity users {
+  * user_id : INTEGER <<PK>>
+  --
+  * username : TEXT <<UNIQUE>>
+  * password_hash : TEXT
+  * display_name : TEXT
+  * role : TEXT
+  * active : INTEGER
+  department_id : INTEGER <<FK>>
+}
+entity departments {
+  * dept_id : INTEGER <<PK>>
+  --
+  * name : TEXT <<UNIQUE>>
+}
+entity courses {
+  * course_id : INTEGER <<PK>>
+  --
+  * code : TEXT <<UNIQUE>>
+  * title : TEXT
+  * dept_id : INTEGER <<FK>>
+}
+entity lecturer_courses {
+  * course_id : INTEGER <<PK,FK>>
+  * lecturer_id : INTEGER <<PK,FK>>
+}
+entity enrolments {
+  * course_id : INTEGER <<PK,FK>>
+  * student_id : INTEGER <<PK,FK>>
+}
+entity assignments {
+  * assignment_id : INTEGER <<PK>>
+  --
+  * course_id : INTEGER <<FK>>
+  * title : TEXT
+  * deadline : TEXT
+  * max_mark : INTEGER
+}
+entity extensions {
+  * extension_id : INTEGER <<PK>>
+  --
+  * assignment_id : INTEGER <<FK>>
+  * student_id : INTEGER <<FK>>
+  * extended_deadline : TEXT
+}
+entity submissions {
+  * submission_id : INTEGER <<PK>>
+  --
+  * assignment_id : INTEGER <<FK>>
+  * student_id : INTEGER <<FK>>
+  * content : TEXT
+  * submitted_at : TEXT
+  * state : TEXT
+}
+entity marks {
+  * mark_id : INTEGER <<PK>>
+  --
+  * submission_id : INTEGER <<FK,UNIQUE>>
+  * raw_mark : INTEGER
+  * awarded_mark : INTEGER
+  * feedback : TEXT
+  * released : INTEGER
+}
+entity audit_events {
+  * audit_id : INTEGER <<PK>>
+  --
+  * mark_id : INTEGER <<FK>>
+  * event_type : TEXT
+  * acting_user_id : INTEGER <<FK>>
+  * event_time : TEXT
+  old_value : INTEGER
+  * new_value : INTEGER
+  * reason : TEXT
+}
+departments ||--o{ courses
+departments ||--o{ users
+courses ||--o{ assignments
+courses ||--o{ lecturer_courses
+users ||--o{ lecturer_courses
+courses ||--o{ enrolments
+users ||--o{ enrolments
+assignments ||--o{ submissions
+users ||--o{ submissions
+assignments ||--o{ extensions
+users ||--o{ extensions
+submissions ||--|| marks
+marks ||--o{ audit_events
+users ||--o{ audit_events
+@enduml

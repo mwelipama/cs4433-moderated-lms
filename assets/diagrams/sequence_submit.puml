@@ -1,0 +1,32 @@
+@startuml
+title Figure 6a. Sequence: Submit Assignment (on-time / resubmit / late / refused)
+actor Student
+participant "Student Menu" as UI
+participant SubmissionService as SS
+participant Clock
+participant ISubmissionRepository as Repo
+Student -> UI : submit(assignmentId, content)
+UI -> SS : submit(studentId, assignmentId, content)
+SS -> Clock : now()
+Clock --> SS : t
+SS -> Repo : findCurrent(assignmentId, studentId)
+Repo --> SS : existing?
+alt t <= D_e (on time)
+  alt existing submission
+    SS -> Repo : replace(content, t) [state=Submitted]
+  else none
+    SS -> Repo : insert(content, t) [state=Submitted]
+  end
+  SS --> UI : OK (Submitted)
+else t > D_e
+  alt existing on-time submission
+    SS --> UI : refused (on-time preserved)
+  else none and t <= cutoff
+    SS -> Repo : insert(content, t) [state=Late]
+    SS --> UI : OK (Late, d days)
+  else t > cutoff
+    SS --> UI : refused (mark = 0)
+  end
+end
+UI --> Student : result
+@enduml

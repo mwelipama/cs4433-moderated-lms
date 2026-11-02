@@ -1,0 +1,32 @@
+@startuml
+title Figure 6b. Sequence: Moderate and Release Marks
+actor "Head of Department" as HoD
+participant "HoD Menu" as UI
+participant ModerationService as MOD
+participant IMarkRepository as MRepo
+participant AuditService as AUD
+participant ISubmissionRepository as SRepo
+HoD -> UI : moderate(courseId, assignmentId)
+UI -> MOD : listMarked(assignmentId)
+MOD -> MRepo : findMarked(assignmentId)
+MRepo --> MOD : marks
+MOD --> UI : marks
+loop each mark
+  alt HoD changes mark
+    HoD -> UI : adjust(markId, newValue, reason)
+    UI -> MOD : adjust(hodId, markId, newValue, reason)
+    MOD -> MRepo : update(markId, newValue)
+    MOD -> AUD : record(MODERATION_CHANGE, old, new, reason)
+    MOD -> SRepo : setState(Moderated)
+  else HoD accepts unchanged
+    HoD -> UI : accept(markId)
+    UI -> MOD : accept(markId)
+    MOD -> SRepo : setState(Moderated)
+    note right : no audit event
+  end
+end
+HoD -> UI : release(assignmentId)
+UI -> MOD : release(assignmentId)
+MOD -> SRepo : setState(Released)
+MOD --> UI : released (visible to students)
+@enduml
