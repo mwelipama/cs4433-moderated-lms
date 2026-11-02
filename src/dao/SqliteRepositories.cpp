@@ -9,7 +9,7 @@ namespace {
 const char* const kUserCols =
     "user_id, username, password_hash, display_name, role, active, department_id";
 
-std::unique_ptr<User> hydrateUser(Statement& st) {
+std::unique_ptr<User> hydrateUser(const Statement& st) {
     const int64_t id = st.colInt64(0);
     const std::string username = st.colText(1);
     const std::string hash = st.colText(2);
@@ -21,7 +21,7 @@ std::unique_ptr<User> hydrateUser(Statement& st) {
     return UserFactory::create(role, id, username, hash, display, active, hasDept, deptId);
 }
 
-Course hydrateCourse(Statement& st) {
+Course hydrateCourse(const Statement& st) {
     Course c;
     c.id = st.colInt64(0);
     c.code = st.colText(1);
@@ -30,7 +30,7 @@ Course hydrateCourse(Statement& st) {
     return c;
 }
 
-Submission hydrateSubmission(Statement& st) {
+Submission hydrateSubmission(const Statement& st) {
     Submission s;
     s.id = st.colInt64(0);
     s.assignmentId = st.colInt64(1);

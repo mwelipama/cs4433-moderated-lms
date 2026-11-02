@@ -15,47 +15,47 @@ public:
 
 private:
     std::unique_ptr<User> login();
-    void dispatch(User& user);
+    void dispatch(const User& user);
 
-    void adminMenu(User& user);
-    void lecturerMenu(User& user);
-    void hodMenu(User& user);
-    void studentMenu(User& user);
+    void adminMenu(const User& user);
+    void lecturerMenu(const User& user);
+    void hodMenu(const User& user);
+    void studentMenu(const User& user);
 
     // Administrator actions
-    void adminCreateDepartment(User& user);
-    void adminListDepartments(User& user);
-    void adminCreateUser(User& user);
-    void adminListUsers(User& user);
-    void adminSetActive(User& user);
-    void adminCreateCourse(User& user);
-    void adminAssignLecturer(User& user);
-    void adminEnrolStudent(User& user);
-    void adminListCourses(User& user);
+    void adminCreateDepartment(const User& user);
+    void adminListDepartments(const User& user);
+    void adminCreateUser(const User& user);
+    void adminListUsers(const User& user);
+    void adminSetActive(const User& user);
+    void adminCreateCourse(const User& user);
+    void adminAssignLecturer(const User& user);
+    void adminEnrolStudent(const User& user);
+    void adminListCourses(const User& user);
 
     // Lecturer actions
-    void lecturerListCourses(User& user);
-    void lecturerListAssignments(User& user);
-    void lecturerCreateAssignment(User& user);
-    void lecturerGrantExtension(User& user);
-    void lecturerExtendClass(User& user);
-    void lecturerMarkQueue(User& user);
-    void lecturerMark(User& user);
+    void lecturerListCourses(const User& user);
+    void lecturerListAssignments(const User& user);
+    void lecturerCreateAssignment(const User& user);
+    void lecturerGrantExtension(const User& user);
+    void lecturerExtendClass(const User& user);
+    void lecturerMarkQueue(const User& user);
+    void lecturerMark(const User& user);
 
     // Head of Department actions
-    void hodListCourses(User& user);
-    void hodListAssignments(User& user);
-    void hodModerationQueue(User& user);
-    void hodAdjust(User& user);
-    void hodAccept(User& user);
-    void hodRelease(User& user);
+    void hodListCourses(const User& user);
+    void hodListAssignments(const User& user);
+    void hodModerationQueue(const User& user);
+    void hodAdjust(const User& user);
+    void hodAccept(const User& user);
+    void hodRelease(const User& user);
 
     // Student actions
-    void studentListCourses(User& user);
-    void studentListAssignments(User& user);
-    void studentSubmit(User& user);
-    void studentViewSubmission(User& user);
-    void studentViewResult(User& user);
+    void studentListCourses(const User& user);
+    void studentListAssignments(const User& user);
+    void studentSubmit(const User& user);
+    void studentViewSubmission(const User& user);
+    void studentViewResult(const User& user);
 
     std::string nameOf(int64_t userId);
 

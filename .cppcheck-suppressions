@@ -1,0 +1,7 @@
+// Justified cppcheck suppressions.
+// useStlAlgorithm: the few short filter loops (mark queue, moderation queue, release)
+// are kept as explicit range-for loops for readability; replacing them with std::copy_if
+// would be less clear at no correctness or performance benefit.
+useStlAlgorithm
+// System headers are out of scope for this project's analysis.
+missingIncludeSystem

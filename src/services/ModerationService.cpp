@@ -56,7 +56,7 @@ int ModerationService::release(const User& actor, int64_t assignmentId) {
     requireHodForAssignment(actor, assignmentId);
     int released = 0;
     db_.transaction([&] {
-        for (auto& s : submissions_.listByAssignment(assignmentId)) {
+        for (const auto& s : submissions_.listByAssignment(assignmentId)) {
             if (s.state == SubmissionState::Moderated) {
                 submissions_.setState(s.id, SubmissionState::Released);
                 ++released;

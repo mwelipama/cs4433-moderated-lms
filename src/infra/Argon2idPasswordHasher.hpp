@@ -9,7 +9,7 @@ namespace lms {
 // stored separately. Defaults follow current OWASP guidance for Argon2id.
 class Argon2idPasswordHasher : public PasswordHasher {
 public:
-    Argon2idPasswordHasher(uint32_t timeCost = 3,
+    explicit Argon2idPasswordHasher(uint32_t timeCost = 3,
                            uint32_t memoryCostKiB = 19456,
                            uint32_t parallelism = 1);
     std::string hash(const std::string& password) const override;

@@ -69,7 +69,13 @@ std::string readPassword(const std::string& prompt) {
     termios noEcho = oldAttr;
     noEcho.c_lflag &= ~static_cast<tcflag_t>(ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &noEcho);
-    std::getline(std::cin, password);
+    try {
+        std::getline(std::cin, password);
+    } catch (...) {
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldAttr);  // always restore the terminal
+        std::cout << "\n";
+        throw;
+    }
     tcsetattr(STDIN_FILENO, TCSANOW, &oldAttr);
     std::cout << "\n";
 #endif

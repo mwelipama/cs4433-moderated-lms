@@ -53,7 +53,7 @@ std::unique_ptr<User> ConsoleApp::login() {
     }
 }
 
-void ConsoleApp::dispatch(User& user) {
+void ConsoleApp::dispatch(const User& user) {
     switch (user.role()) {
         case Role::Admin: adminMenu(user); break;
         case Role::Lecturer: lecturerMenu(user); break;
@@ -64,7 +64,7 @@ void ConsoleApp::dispatch(User& user) {
 
 // =============================== Administrator ===============================
 
-void ConsoleApp::adminMenu(User& user) {
+void ConsoleApp::adminMenu(const User& user) {
     for (;;) {
         console::title("Administrator - " + user.displayName());
         std::cout << "1) Create department\n"
@@ -98,13 +98,13 @@ void ConsoleApp::adminMenu(User& user) {
     }
 }
 
-void ConsoleApp::adminCreateDepartment(User& user) {
+void ConsoleApp::adminCreateDepartment(const User& user) {
     const std::string name = console::readNonEmpty("Department name: ");
     const int64_t id = svc_.userAdmin().createDepartment(user, name);
     console::info("Created department #" + std::to_string(id) + ".");
 }
 
-void ConsoleApp::adminListDepartments(User& user) {
+void ConsoleApp::adminListDepartments(const User& user) {
     const auto depts = svc_.userAdmin().listDepartments(user);
     console::title("Departments");
     if (depts.empty()) { console::info("(none)"); return; }
@@ -112,7 +112,7 @@ void ConsoleApp::adminListDepartments(User& user) {
         std::cout << "  #" << d.id << "  " << d.name << "\n";
 }
 
-void ConsoleApp::adminCreateUser(User& user) {
+void ConsoleApp::adminCreateUser(const User& user) {
     console::title("Create user");
     std::cout << "1) Administrator\n2) Lecturer\n3) Head of Department\n4) Student\n";
     const int roleChoice = console::readMenuChoice(1, 4);
@@ -135,7 +135,7 @@ void ConsoleApp::adminCreateUser(User& user) {
     console::info("Created " + roleLabel(role) + " #" + std::to_string(id) + ".");
 }
 
-void ConsoleApp::adminListUsers(User& user) {
+void ConsoleApp::adminListUsers(const User& user) {
     const auto users = svc_.userAdmin().listUsers(user);
     console::title("Users");
     for (const auto& u : users) {
@@ -146,14 +146,14 @@ void ConsoleApp::adminListUsers(User& user) {
     }
 }
 
-void ConsoleApp::adminSetActive(User& user) {
+void ConsoleApp::adminSetActive(const User& user) {
     const int64_t id = console::readId("User id: ");
     const bool active = console::readYesNo("Set this account active?");
     svc_.userAdmin().setUserActive(user, id, active);
     console::info(std::string("User #") + std::to_string(id) + (active ? " activated." : " deactivated."));
 }
 
-void ConsoleApp::adminCreateCourse(User& user) {
+void ConsoleApp::adminCreateCourse(const User& user) {
     const std::string code = console::readNonEmpty("Course code: ");
     const std::string title = console::readNonEmpty("Course title: ");
     adminListDepartments(user);
@@ -162,7 +162,7 @@ void ConsoleApp::adminCreateCourse(User& user) {
     console::info("Created course #" + std::to_string(id) + ".");
 }
 
-void ConsoleApp::adminAssignLecturer(User& user) {
+void ConsoleApp::adminAssignLecturer(const User& user) {
     adminListCourses(user);
     const int64_t courseId = console::readId("Course id: ");
     const int64_t lecturerId = console::readId("Lecturer user id: ");
@@ -171,7 +171,7 @@ void ConsoleApp::adminAssignLecturer(User& user) {
                   std::to_string(courseId) + ".");
 }
 
-void ConsoleApp::adminEnrolStudent(User& user) {
+void ConsoleApp::adminEnrolStudent(const User& user) {
     const int64_t courseId = console::readId("Course id: ");
     const int64_t studentId = console::readId("Student user id: ");
     svc_.courses().enrolStudent(user, courseId, studentId);
@@ -179,7 +179,7 @@ void ConsoleApp::adminEnrolStudent(User& user) {
                   std::to_string(courseId) + ".");
 }
 
-void ConsoleApp::adminListCourses(User& user) {
+void ConsoleApp::adminListCourses(const User& user) {
     const auto courses = svc_.courses().listCourses(user);
     console::title("Courses");
     if (courses.empty()) { console::info("(none)"); return; }
@@ -190,7 +190,7 @@ void ConsoleApp::adminListCourses(User& user) {
 
 // ================================= Lecturer ==================================
 
-void ConsoleApp::lecturerMenu(User& user) {
+void ConsoleApp::lecturerMenu(const User& user) {
     for (;;) {
         console::title("Lecturer - " + user.displayName());
         std::cout << "1) My courses\n"
@@ -220,7 +220,7 @@ void ConsoleApp::lecturerMenu(User& user) {
     }
 }
 
-void ConsoleApp::lecturerListCourses(User& user) {
+void ConsoleApp::lecturerListCourses(const User& user) {
     const auto courses = svc_.lecturerCourseRepo().coursesForLecturer(user.id());
     console::title("My courses");
     if (courses.empty()) { console::info("(you are not assigned to any course)"); return; }
@@ -228,7 +228,7 @@ void ConsoleApp::lecturerListCourses(User& user) {
         std::cout << "  #" << c.id << "  " << c.code << "  " << c.title << "\n";
 }
 
-void ConsoleApp::lecturerListAssignments(User& user) {
+void ConsoleApp::lecturerListAssignments(const User& user) {
     const int64_t courseId = console::readId("Course id: ");
     const auto assignments = svc_.assignments().listAssignments(user, courseId);
     console::title("Assignments");
@@ -238,7 +238,7 @@ void ConsoleApp::lecturerListAssignments(User& user) {
                   << "  max " << a.maxMark << "\n";
 }
 
-void ConsoleApp::lecturerCreateAssignment(User& user) {
+void ConsoleApp::lecturerCreateAssignment(const User& user) {
     const int64_t courseId = console::readId("Course id: ");
     const std::string title = console::readNonEmpty("Assignment title: ");
     const std::string deadline = console::readNonEmpty("Deadline (YYYY-MM-DDTHH:MM:SS, UTC): ");
@@ -247,7 +247,7 @@ void ConsoleApp::lecturerCreateAssignment(User& user) {
     console::info("Created assignment #" + std::to_string(id) + ".");
 }
 
-void ConsoleApp::lecturerGrantExtension(User& user) {
+void ConsoleApp::lecturerGrantExtension(const User& user) {
     const int64_t assignmentId = console::readId("Assignment id: ");
     const int64_t studentId = console::readId("Student user id: ");
     const std::string deadline = console::readNonEmpty("Extended deadline (YYYY-MM-DDTHH:MM:SS, UTC): ");
@@ -255,14 +255,14 @@ void ConsoleApp::lecturerGrantExtension(User& user) {
     console::info("Extension granted.");
 }
 
-void ConsoleApp::lecturerExtendClass(User& user) {
+void ConsoleApp::lecturerExtendClass(const User& user) {
     const int64_t assignmentId = console::readId("Assignment id: ");
     const std::string deadline = console::readNonEmpty("New class deadline (YYYY-MM-DDTHH:MM:SS, UTC): ");
     svc_.assignments().extendClass(user, assignmentId, deadline);
     console::info("Deadline extended for the whole class.");
 }
 
-void ConsoleApp::lecturerMarkQueue(User& user) {
+void ConsoleApp::lecturerMarkQueue(const User& user) {
     const int64_t assignmentId = console::readId("Assignment id: ");
     const auto queue = svc_.marking().markQueue(user, assignmentId);
     console::title("Submissions");
@@ -272,7 +272,7 @@ void ConsoleApp::lecturerMarkQueue(User& user) {
                   << "  [" << toString(s.state) << "]  at " << s.submittedAt << "\n";
 }
 
-void ConsoleApp::lecturerMark(User& user) {
+void ConsoleApp::lecturerMark(const User& user) {
     const int64_t submissionId = console::readId("Submission id: ");
     const int rawMark = console::readInt("Raw mark: ");
     const std::string feedback = console::readNonEmpty("Feedback: ");
@@ -287,7 +287,7 @@ void ConsoleApp::lecturerMark(User& user) {
 
 // ============================ Head of Department =============================
 
-void ConsoleApp::hodMenu(User& user) {
+void ConsoleApp::hodMenu(const User& user) {
     for (;;) {
         console::title("Head of Department - " + user.displayName());
         std::cout << "1) Courses in my department\n"
@@ -315,7 +315,7 @@ void ConsoleApp::hodMenu(User& user) {
     }
 }
 
-void ConsoleApp::hodListCourses(User& user) {
+void ConsoleApp::hodListCourses(const User& user) {
     console::title("Courses in my department");
     bool any = false;
     for (const auto& c : svc_.courseRepo().list()) {
@@ -327,7 +327,7 @@ void ConsoleApp::hodListCourses(User& user) {
     if (!any) console::info("(no courses in your department)");
 }
 
-void ConsoleApp::hodListAssignments(User& user) {
+void ConsoleApp::hodListAssignments(const User& user) {
     const int64_t courseId = console::readId("Course id: ");
     const auto assignments = svc_.assignments().listForHod(user, courseId);
     console::title("Assignments");
@@ -337,7 +337,7 @@ void ConsoleApp::hodListAssignments(User& user) {
                   << "  max " << a.maxMark << "\n";
 }
 
-void ConsoleApp::hodModerationQueue(User& user) {
+void ConsoleApp::hodModerationQueue(const User& user) {
     const int64_t assignmentId = console::readId("Assignment id: ");
     const auto queue = svc_.moderation().moderationQueue(user, assignmentId);
     console::title("Marked submissions awaiting moderation");
@@ -351,7 +351,7 @@ void ConsoleApp::hodModerationQueue(User& user) {
     }
 }
 
-void ConsoleApp::hodAdjust(User& user) {
+void ConsoleApp::hodAdjust(const User& user) {
     const int64_t submissionId = console::readId("Submission id: ");
     const int newMark = console::readInt("New awarded mark: ");
     const std::string reason = console::readNonEmpty("Reason for the change: ");
@@ -359,13 +359,13 @@ void ConsoleApp::hodAdjust(User& user) {
     console::info("Mark moderated and adjusted.");
 }
 
-void ConsoleApp::hodAccept(User& user) {
+void ConsoleApp::hodAccept(const User& user) {
     const int64_t submissionId = console::readId("Submission id: ");
     svc_.moderation().accept(user, submissionId);
     console::info("Mark moderated (accepted unchanged).");
 }
 
-void ConsoleApp::hodRelease(User& user) {
+void ConsoleApp::hodRelease(const User& user) {
     const int64_t assignmentId = console::readId("Assignment id: ");
     const int count = svc_.moderation().release(user, assignmentId);
     console::info("Released " + std::to_string(count) + " moderated submission(s) to students.");
@@ -373,7 +373,7 @@ void ConsoleApp::hodRelease(User& user) {
 
 // ================================== Student ==================================
 
-void ConsoleApp::studentMenu(User& user) {
+void ConsoleApp::studentMenu(const User& user) {
     for (;;) {
         console::title("Student - " + user.displayName());
         std::cout << "1) My courses\n"
@@ -399,7 +399,7 @@ void ConsoleApp::studentMenu(User& user) {
     }
 }
 
-void ConsoleApp::studentListCourses(User& user) {
+void ConsoleApp::studentListCourses(const User& user) {
     const auto courses = svc_.enrolmentRepo().coursesForStudent(user.id());
     console::title("My courses");
     if (courses.empty()) { console::info("(you are not enrolled in any course)"); return; }
@@ -407,7 +407,7 @@ void ConsoleApp::studentListCourses(User& user) {
         std::cout << "  #" << c.id << "  " << c.code << "  " << c.title << "\n";
 }
 
-void ConsoleApp::studentListAssignments(User& user) {
+void ConsoleApp::studentListAssignments(const User& user) {
     const int64_t courseId = console::readId("Course id: ");
     const auto assignments = svc_.assignments().listForStudent(user, courseId);
     console::title("Assignments");
@@ -420,7 +420,7 @@ void ConsoleApp::studentListAssignments(User& user) {
     }
 }
 
-void ConsoleApp::studentSubmit(User& user) {
+void ConsoleApp::studentSubmit(const User& user) {
     const int64_t assignmentId = console::readId("Assignment id: ");
     const std::string content = console::readNonEmpty("Your submission text: ");
     const auto result = svc_.submissions().submit(user, assignmentId, content);
@@ -431,7 +431,7 @@ void ConsoleApp::studentSubmit(User& user) {
         console::info("Submitted on time.");
 }
 
-void ConsoleApp::studentViewSubmission(User& user) {
+void ConsoleApp::studentViewSubmission(const User& user) {
     const int64_t assignmentId = console::readId("Assignment id: ");
     const auto sub = svc_.submissions().myGet(user, assignmentId);
     console::title("My submission");
@@ -441,7 +441,7 @@ void ConsoleApp::studentViewSubmission(User& user) {
     console::info("Marks become visible only once released by the Head of Department.");
 }
 
-void ConsoleApp::studentViewResult(User& user) {
+void ConsoleApp::studentViewResult(const User& user) {
     const int64_t assignmentId = console::readId("Assignment id: ");
     const auto result = svc_.submissions().myReleasedResult(user, assignmentId);
     console::title("My result");

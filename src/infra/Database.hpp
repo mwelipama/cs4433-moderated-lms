@@ -67,11 +67,11 @@ public:
         exec("BEGIN IMMEDIATE");
         try {
             fn();
+            exec("COMMIT");
         } catch (...) {
             try { exec("ROLLBACK"); } catch (...) { /* preserve original exception */ }
             throw;
         }
-        exec("COMMIT");
     }
 
     sqlite3* handle() const { return db_; }

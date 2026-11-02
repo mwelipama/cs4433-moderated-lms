@@ -42,4 +42,8 @@ TEST_CASE("Datetime round-trips through epoch") {
     CHECK(DateTime::isValid(iso));
     CHECK_FALSE(DateTime::isValid("not-a-date"));
     CHECK_FALSE(DateTime::isValid("2026-13-01T00:00:00"));
+    CHECK_FALSE(DateTime::isValid("2026-02-30T00:00:00"));  // Feb 30 never exists
+    CHECK_FALSE(DateTime::isValid("2026-04-31T00:00:00"));  // April has 30 days
+    CHECK_FALSE(DateTime::isValid("2026-02-29T00:00:00"));  // 2026 is not a leap year
+    CHECK(DateTime::isValid("2024-02-29T00:00:00"));        // 2024 is a leap year
 }

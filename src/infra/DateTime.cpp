@@ -36,13 +36,20 @@ std::string DateTime::nowUtc() {
     return fromEpoch(static_cast<int64_t>(t));
 }
 
+static bool validCivilDate(int y, int m, int d) {
+    if (m < 1 || m > 12 || d < 1) return false;
+    static const int daysInMonth[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+    int dim = daysInMonth[m - 1];
+    if (m == 2 && ((y % 4 == 0 && y % 100 != 0) || y % 400 == 0)) dim = 29;
+    return d <= dim;
+}
+
 int64_t DateTime::toEpoch(const std::string& iso) {
     int Y = 0, Mo = 0, D = 0, h = 0, mi = 0, s = 0;
     const int n = std::sscanf(iso.c_str(), "%d-%d-%dT%d:%d:%d", &Y, &Mo, &D, &h, &mi, &s);
     if (n < 3)
         throw std::invalid_argument("invalid ISO-8601 datetime: '" + iso + "'");
-    if (Mo < 1 || Mo > 12 || D < 1 || D > 31 || h < 0 || h > 23 ||
-        mi < 0 || mi > 59 || s < 0 || s > 60)
+    if (h < 0 || h > 23 || mi < 0 || mi > 59 || s < 0 || s > 60 || !validCivilDate(Y, Mo, D))
         throw std::invalid_argument("datetime field out of range: '" + iso + "'");
     const int64_t days = daysFromCivil(Y, static_cast<unsigned>(Mo), static_cast<unsigned>(D));
     return days * 86400 + h * 3600 + mi * 60 + s;
