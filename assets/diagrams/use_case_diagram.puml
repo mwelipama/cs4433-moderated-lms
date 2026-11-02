@@ -1,0 +1,61 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+title Figure 1. Moderated Learning Management System - Use Case Diagram
+
+actor "User" as U
+actor "Administrator" as A
+actor "Lecturer" as L
+actor "Head of Department" as H
+actor "Student" as S
+
+U <|-- A
+U <|-- L
+U <|-- H
+U <|-- S
+
+rectangle "Moderated LMS" {
+  usecase "Log in" as LOGIN
+  usecase "Manage User Accounts" as USERS
+  usecase "Manage Departments\nand Courses" as COURSES
+  usecase "Assign Lecturer\nto Course" as ASSIGN
+  usecase "Enrol Student\nin Course" as ENROL
+  usecase "Create Assignment" as CREATE
+  usecase "Grant Individual\nExtension" as EXT
+  usecase "Mark Submission" as MARK
+  usecase "Write Feedback" as FEED
+  usecase "View Courses\nand Assignments" as VIEW
+  usecase "Submit Assignment" as SUBMIT
+  usecase "Resubmit before\nDeadline" as RESUB
+  usecase "Apply Late Penalty" as LATE
+  usecase "Moderate Marks" as MOD
+  usecase "Release Marks\nto Students" as REL
+  usecase "View Released\nMarks and Feedback" as VIEWM
+  usecase "Record Mark Change\n(audit log)" as AUDIT
+}
+
+U --> LOGIN
+
+A --> USERS
+A --> COURSES
+A --> ASSIGN
+A --> ENROL
+
+L --> CREATE
+L --> EXT
+L --> MARK
+
+S --> VIEW
+S --> SUBMIT
+S --> VIEWM
+
+H --> MOD
+H --> REL
+
+MARK ..> FEED : <<include>>
+MARK ..> AUDIT : <<include>>
+MOD  ..> AUDIT : <<include>>
+RESUB ..> SUBMIT : <<extend>>
+LATE  ..> SUBMIT : <<extend>>
+@enduml
