@@ -61,7 +61,7 @@ Three use cases are specified in full below, including **Submit Assignment** as 
   - *E1. Existing on-time submission, attempt after D_e:* the system **refuses** the replacement and preserves the on-time submission, informing the student it will be marked without penalty (FR-12b, C7).
   - *E2. Attempt after the final acceptance cutoff:* refused; if no submission exists, the assignment is recorded as not submitted and scored zero (FR-21).
   - *E3. Not enrolled / assignment not visible:* refused with an authorisation message (FR-02).
-  - *E4. Invalid or empty content:* rejected and re-prompted (FR-19).
+  - *E4. Invalid or empty content:* rejected and re-entered (FR-19).
   - *E5. Data-access error:* caught and reported; no partial submission (FR-19, NFR-06).
 - **Postconditions:** At most one current submission exists for the student and assignment, in state **Submitted** (on time) or **Late** (with recorded `d`); no penalty has yet been computed; no mark is visible to the student (FR-16).
 - **Business rules:** C2, C5, C6, C7; FR-12, FR-13 (penalty deferred to marking), FR-18, FR-21.
@@ -84,7 +84,7 @@ Three use cases are specified in full below, including **Submit Assignment** as 
 - **Alternative flows:**
   - *3a. Re-marking an already-marked submission (before release):* permitted; step 7 writes a **CHANGE** event with the previous A as the old value.
 - **Exception flows:**
-  - *E1. R out of range or feedback empty:* rejected and re-prompted (FR-14, FR-19).
+  - *E1. R out of range or feedback empty:* rejected and re-entered (FR-14, FR-19).
   - *E2. Lecturer not assigned to the course:* refused (FR-02).
   - *E3. Data-access error:* caught and reported; no partial write (NFR-06).
 - **Postconditions:** The submission is **Marked** with raw mark R, awarded mark A and feedback; exactly one audit event (INITIAL or CHANGE) exists for this action; the student still sees nothing (FR-16).
@@ -110,7 +110,7 @@ Three use cases are specified in full below, including **Submit Assignment** as 
 - **Exception flows:**
   - *E1. Course outside the HoD's department:* access refused (FR-02).
   - *E2. Attempt to release a submission not yet Moderated:* rejected — only Moderated submissions may be released (FR-18).
-  - *E3. Adjusted mark out of range:* rejected and re-prompted (FR-14).
+  - *E3. Adjusted mark out of range:* rejected and re-entered (FR-14).
   - *E4. Data-access error:* caught and reported; no partial state change (NFR-06).
 - **Postconditions:** Reviewed submissions are **Moderated** (every decision recorded by state, changes additionally audited); released submissions are **Released** and visible to students; unreleased marks remain invisible.
 - **Business rules:** C1 (marking separated from release), FR-15 (department-scoped moderation), FR-16 (controlled release), FR-17 (audit only on change; state records every decision), FR-18 (valid transitions).

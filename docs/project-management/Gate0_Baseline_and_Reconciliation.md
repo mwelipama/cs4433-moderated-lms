@@ -64,12 +64,12 @@ This is the governing scheme. See Conflict #2 — it differs from the summary ta
 
 ---
 
-## 4. Conflicts identified and owner decisions (settled)
+## 4. Conflicts identified and decisions taken
 
-> These were surfaced for decision; the owner's decisions are now recorded and final.
+> Each conflict is listed with the decision taken and its rationale.
 
-**Conflict #1 — Final report length (SETTLED by owner).**
-The official brief (sec.7) specifies a single report of 6,000–8,000 words in 14 prescribed sections. The lecturer's **latest instruction is 4–5 pages**, and the owner has ruled it **supersedes** the 6,000–8,000-word requirement for the final report. *Caveat:* retain the lecturer's 4–5 page instruction **in writing** if available, as evidence it supersedes the brief. The report therefore follows the **concise-report + GitHub-evidence model**: a tight 4–5 page report that keeps the required 14-section structure in condensed form and links to the full SRS, design, test and evidence artefacts hosted in the repo. The full artefacts are still produced — the P2–P8 marks depend on the artefacts, not the page count.
+**Conflict #1 — Final report length (decided).**
+The official brief (sec.7) specifies a single report of 6,000–8,000 words in 14 prescribed sections. The lecturer's **latest instruction is 4–5 pages**, which **supersedes** the 6,000–8,000-word requirement for the final report. *Caveat:* retain the lecturer's 4–5 page instruction **in writing** if available, as evidence it supersedes the brief. The report therefore follows the **concise-report + GitHub-evidence model**: a tight 4–5 page report that keeps the required 14-section structure in condensed form and links to the full SRS, design, test and evidence artefacts hosted in the repo. The full artefacts are still produced — the P2–P8 marks depend on the artefacts, not the page count.
 
 **Conflict #2 — Mark weightings (resolve: official PDF governs).**
 The summary table in the working brief shows V&V **15**, "Deployment and Maintenance" combined **6**, Ethics **4**. The official PDF shows V&V **12**, Deployment **4** + Maintenance **6** (separate), Ethics **3**. Both sum to 100 but allocate effort differently. The official PDF's mark allocation is authoritative and governs this project.
@@ -77,11 +77,11 @@ The summary table in the working brief shows V&V **15**, "Deployment and Mainten
 **Conflict #3 — Submission package.**
 Official PDF: one PDF report + Git link. Latest guidance: GitHub as the primary evidence store with a concise report. Reconciled under Decision #1; GitHub will hold all detailed evidence either way.
 
-**Conflict #4 — Console vs simple desktop GUI (APPROVED: console).**
-The brief allows "console or simple desktop GUI". The owner has **approved a C++17 console application with SQLite — no Qt GUI**. Priorities: correctness, role enforcement, business rules, persistence, auditability, testing, and a demonstrable workflow for the mandatory viva.
+**Conflict #4 — Console vs simple desktop GUI (decided: console).**
+The brief allows "console or simple desktop GUI". This project is built as a **C++17 console application with SQLite — no Qt GUI**. Priorities: correctness, role enforcement, business rules, persistence, auditability, testing, and a demonstrable workflow for the mandatory viva.
 
-**Conflict #5 — Deadline (SETTLED).**
-The final submission deadline is **2 November 2026**, per the latest lecturer update supplied by the owner (the brief is dated 7 Nov 2026 with "7 weeks allowed"; the 2 Nov date governs unless a later extension is received).
+**Conflict #5 — Deadline (decided).**
+The final submission deadline is **2 November 2026**, per the latest lecturer update (the brief is dated 7 Nov 2026 with "7 weeks allowed"; the 2 Nov date governs unless a later extension is received).
 
 ---
 
