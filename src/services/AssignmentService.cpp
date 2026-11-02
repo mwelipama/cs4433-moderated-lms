@@ -38,6 +38,16 @@ void AssignmentService::grantExtension(const User& actor, int64_t assignmentId, 
     extensions_.set(assignmentId, studentId, extendedDeadlineIso);
 }
 
+void AssignmentService::extendClass(const User& actor, int64_t assignmentId,
+                                    const std::string& extendedDeadlineIso) {
+    auto assignment = assignments_.findById(assignmentId);
+    if (!assignment) throw NotFoundError("no assignment with id " + std::to_string(assignmentId));
+    requireLecturerForCourse(actor, assignment->courseId);
+    if (!DateTime::isValid(extendedDeadlineIso))
+        throw ValidationError("extended deadline is not a valid ISO-8601 datetime");
+    classExtensions_.set(assignmentId, extendedDeadlineIso);
+}
+
 std::vector<Assignment> AssignmentService::listAssignments(const User& actor, int64_t courseId) {
     requireLecturerForCourse(actor, courseId);
     return assignments_.listByCourse(courseId);

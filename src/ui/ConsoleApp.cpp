@@ -197,10 +197,11 @@ void ConsoleApp::lecturerMenu(User& user) {
                      "2) List assignments in a course\n"
                      "3) Create assignment\n"
                      "4) Grant a student an extension\n"
-                     "5) View submissions to mark\n"
-                     "6) Mark a submission\n"
+                     "5) Extend the deadline for a whole class\n"
+                     "6) View submissions to mark\n"
+                     "7) Mark a submission\n"
                      "0) Log out\n";
-        const int c = console::readMenuChoice(0, 6);
+        const int c = console::readMenuChoice(0, 7);
         if (c == 0) return;
         try {
             switch (c) {
@@ -208,8 +209,9 @@ void ConsoleApp::lecturerMenu(User& user) {
                 case 2: lecturerListAssignments(user); break;
                 case 3: lecturerCreateAssignment(user); break;
                 case 4: lecturerGrantExtension(user); break;
-                case 5: lecturerMarkQueue(user); break;
-                case 6: lecturerMark(user); break;
+                case 5: lecturerExtendClass(user); break;
+                case 6: lecturerMarkQueue(user); break;
+                case 7: lecturerMark(user); break;
             }
         } catch (const LmsError& e) {
             console::error(e.what());
@@ -251,6 +253,13 @@ void ConsoleApp::lecturerGrantExtension(User& user) {
     const std::string deadline = console::readNonEmpty("Extended deadline (YYYY-MM-DDTHH:MM:SS, UTC): ");
     svc_.assignments().grantExtension(user, assignmentId, studentId, deadline);
     console::info("Extension granted.");
+}
+
+void ConsoleApp::lecturerExtendClass(User& user) {
+    const int64_t assignmentId = console::readId("Assignment id: ");
+    const std::string deadline = console::readNonEmpty("New class deadline (YYYY-MM-DDTHH:MM:SS, UTC): ");
+    svc_.assignments().extendClass(user, assignmentId, deadline);
+    console::info("Deadline extended for the whole class.");
 }
 
 void ConsoleApp::lecturerMarkQueue(User& user) {
@@ -403,9 +412,12 @@ void ConsoleApp::studentListAssignments(User& user) {
     const auto assignments = svc_.assignments().listForStudent(user, courseId);
     console::title("Assignments");
     if (assignments.empty()) { console::info("(none)"); return; }
-    for (const auto& a : assignments)
-        std::cout << "  #" << a.id << "  " << a.title << "  due " << a.deadline
-                  << "  max " << a.maxMark << "\n";
+    for (const auto& a : assignments) {
+        const std::string eff = svc_.submissions().effectiveDeadline(a, user.id());
+        std::cout << "  #" << a.id << "  " << a.title << "  due " << eff;
+        if (eff != a.deadline) std::cout << "  (extended from " << a.deadline << ")";
+        std::cout << "  max " << a.maxMark << "\n";
+    }
 }
 
 void ConsoleApp::studentSubmit(User& user) {

@@ -58,6 +58,14 @@ CREATE TABLE extensions (
     UNIQUE (assignment_id, student_id)
 );
 
+-- Class-wide extension: at most one per assignment, applied to every enrolled student.
+-- The per-student `extensions` table still overrides for named individuals; the effective
+-- deadline is the latest of the base deadline, this class extension and any individual one.
+CREATE TABLE class_extensions (
+    assignment_id     INTEGER PRIMARY KEY REFERENCES assignments(assignment_id),
+    extended_deadline TEXT    NOT NULL
+);
+
 -- One current submission per student per assignment (resubmission updates it)
 CREATE TABLE submissions (
     submission_id INTEGER PRIMARY KEY,

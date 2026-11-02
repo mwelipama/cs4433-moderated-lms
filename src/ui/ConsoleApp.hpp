@@ -38,6 +38,7 @@ private:
     void lecturerListAssignments(User& user);
     void lecturerCreateAssignment(User& user);
     void lecturerGrantExtension(User& user);
+    void lecturerExtendClass(User& user);
     void lecturerMarkQueue(User& user);
     void lecturerMark(User& user);
 

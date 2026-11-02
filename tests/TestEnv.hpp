@@ -41,6 +41,7 @@ struct TestEnv {
     SqliteEnrolmentRepository enrolments;
     SqliteAssignmentRepository assignments;
     SqliteExtensionRepository extensions;
+    SqliteClassExtensionRepository classExtensions;
     SqliteSubmissionRepository submissions;
     SqliteMarkRepository marks;
     SqliteAuditRepository auditRepo;
@@ -62,14 +63,14 @@ struct TestEnv {
     explicit TestEnv(const std::string& path = ":memory:",
                      const std::string& now = "2026-01-10T00:00:00")
         : db(path), users(db), departments(db), courses(db), lecturerCourses(db),
-          enrolments(db), assignments(db), extensions(db), submissions(db), marks(db),
+          enrolments(db), assignments(db), extensions(db), classExtensions(db), submissions(db), marks(db),
           auditRepo(db), clock(now), hasher(1, 256, 1), policy(),
           audit(auditRepo, clock), auth(users, hasher),
           userAdmin(users, departments, hasher),
           courseSvc(courses, departments, users, lecturerCourses, enrolments),
-          assignmentSvc(assignments, courses, lecturerCourses, enrolments, extensions),
-          submissionSvc(submissions, assignments, enrolments, extensions, marks, clock),
-          markingSvc(submissions, marks, assignments, lecturerCourses, extensions,
+          assignmentSvc(assignments, courses, lecturerCourses, enrolments, extensions, classExtensions),
+          submissionSvc(submissions, assignments, enrolments, extensions, classExtensions, marks, clock),
+          markingSvc(submissions, marks, assignments, lecturerCourses, extensions, classExtensions,
                      audit, policy, db),
           moderationSvc(submissions, marks, assignments, courses, audit, db) {
         SchemaInitializer::ensureSchema(db);

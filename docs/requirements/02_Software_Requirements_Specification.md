@@ -95,3 +95,7 @@
 ## 6. Verification approach
 
 Each requirement is verified by its acceptance criterion: functional requirements by use-case-derived system/acceptance tests and unit tests of the business rules (late penalty, lifecycle, audit); non-functional requirements by the stated measurements on the reference environment and by static analysis and code review (NFR-03/04/09). The full FR → use case → design → source → test traceability matrix is completed as later gates add design and code.
+
+## Change Request CR1 (release v1.1): class-wide deadline extension
+
+**FR-22 (Must).** A Lecturer can extend the deadline of an assignment for the whole class, not only for an individual student. **Acceptance:** a lecturer assigned to the course sets one class deadline for the assignment; every enrolled student's effective deadline becomes the latest of the base deadline, the class extension and any individual extension; an unassigned lecturer or a non-lecturer is refused; the extension is shown on each student's assignment list and is applied identically by submission acceptance and by the late penalty.

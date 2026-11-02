@@ -23,15 +23,15 @@ public:
     explicit ServiceContainer(Database& db)
         : db_(db),
           users_(db), departments_(db), courses_(db), lecturerCourses_(db), enrolments_(db),
-          assignments_(db), extensions_(db), submissions_(db), marks_(db), auditRepo_(db),
+          assignments_(db), extensions_(db), classExtensions_(db), submissions_(db), marks_(db), auditRepo_(db),
           clock_(), hasher_(), policy_(),
           audit_(auditRepo_, clock_),
           auth_(users_, hasher_),
           userAdmin_(users_, departments_, hasher_),
           courseSvc_(courses_, departments_, users_, lecturerCourses_, enrolments_),
-          assignmentSvc_(assignments_, courses_, lecturerCourses_, enrolments_, extensions_),
-          submissionSvc_(submissions_, assignments_, enrolments_, extensions_, marks_, clock_),
-          markingSvc_(submissions_, marks_, assignments_, lecturerCourses_, extensions_,
+          assignmentSvc_(assignments_, courses_, lecturerCourses_, enrolments_, extensions_, classExtensions_),
+          submissionSvc_(submissions_, assignments_, enrolments_, extensions_, classExtensions_, marks_, clock_),
+          markingSvc_(submissions_, marks_, assignments_, lecturerCourses_, extensions_, classExtensions_,
                       audit_, policy_, db_),
           moderationSvc_(submissions_, marks_, assignments_, courses_, audit_, db_) {}
 
@@ -65,6 +65,7 @@ public:
     ILecturerCourseRepository& lecturerCourseRepo() { return lecturerCourses_; }
     IEnrolmentRepository& enrolmentRepo() { return enrolments_; }
     IAssignmentRepository& assignmentRepo() { return assignments_; }
+    IClassExtensionRepository& classExtensionRepo() { return classExtensions_; }
     ISubmissionRepository& submissionRepo() { return submissions_; }
     IMarkRepository& markRepo() { return marks_; }
     IAuditRepository& auditRepo() { return auditRepo_; }
@@ -79,6 +80,7 @@ private:
     SqliteEnrolmentRepository enrolments_;
     SqliteAssignmentRepository assignments_;
     SqliteExtensionRepository extensions_;
+    SqliteClassExtensionRepository classExtensions_;
     SqliteSubmissionRepository submissions_;
     SqliteMarkRepository marks_;
     SqliteAuditRepository auditRepo_;

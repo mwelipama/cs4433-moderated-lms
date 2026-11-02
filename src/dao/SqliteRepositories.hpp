@@ -84,6 +84,15 @@ private:
     Database& db_;
 };
 
+class SqliteClassExtensionRepository : public IClassExtensionRepository {
+public:
+    explicit SqliteClassExtensionRepository(Database& db) : db_(db) {}
+    void set(int64_t assignmentId, const std::string& extendedDeadline) override;
+    std::optional<std::string> find(int64_t assignmentId) override;
+private:
+    Database& db_;
+};
+
 class SqliteSubmissionRepository : public ISubmissionRepository {
 public:
     explicit SqliteSubmissionRepository(Database& db) : db_(db) {}

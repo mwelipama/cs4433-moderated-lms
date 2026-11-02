@@ -2,6 +2,8 @@
 #include "services/Validation.hpp"
 #include "domain/Errors.hpp"
 #include "infra/DateTime.hpp"
+#include "domain/Deadline.hpp"
+#include <optional>
 
 namespace lms {
 
@@ -28,9 +30,11 @@ MarkingService::MarkResult MarkingService::mark(const User& actor, int64_t submi
     requireRange(rawMark, 0, assignment.maxMark, "mark");
     requireNonBlank(feedback, "feedback");
 
-    const std::string effIso = extensions_.find(assignment.id, sub->studentId)
-                                   ? extensions_.find(assignment.id, sub->studentId)->extendedDeadline
-                                   : assignment.deadline;
+    auto indivExt = extensions_.find(assignment.id, sub->studentId);
+    std::optional<std::string> individualIso =
+        indivExt ? std::optional<std::string>(indivExt->extendedDeadline) : std::nullopt;
+    const std::string effIso = effectiveDeadline(assignment.deadline,
+                                                 classExtensions_.find(assignment.id), individualIso);
     const int daysLate = sub->daysLate(effIso);
     const int awarded = penaltyPolicy_.awardedMark(rawMark, assignment.maxMark, daysLate);
 
