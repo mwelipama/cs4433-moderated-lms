@@ -1,0 +1,26 @@
+@startuml
+title Figure 9. Deployment Diagram - Moderated Learning Management System
+
+actor "Administrator" as A
+actor "Lecturer" as L
+actor "Head of Department" as H
+actor "Student" as S
+
+node "School Computer\n(Windows / Linux / macOS)" as PC {
+  artifact "lms\n(C++17 console executable)" as APP
+  database "lms.db\n(SQLite database file)" as DB
+  APP --> DB : in-process reads/writes\n(embedded SQLite)
+}
+
+A --> APP : console session
+L --> APP : console session
+H --> APP : console session
+S --> APP : console session
+
+note bottom of PC
+  Single-machine, fully offline deployment. No server, network
+  service, container or external dependency to configure. SQLite
+  and the password hasher are compiled into the executable; the
+  database is a single file to back up.
+end note
+@enduml
