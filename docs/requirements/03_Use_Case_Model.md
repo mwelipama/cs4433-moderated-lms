@@ -44,7 +44,7 @@ Three use cases are specified in full below, including **Submit Assignment** as 
 ### UC-10 — Submit Assignment
 
 - **Primary actor:** Student
-- **Stakeholders & interests:** Student (work recorded; can fix mistakes before the deadline; late work not rejected; an on-time submission is protected); Lecturer (a single current submission to mark); HoD (late penalties enforceable).
+- **Stakeholders & interests:** Student (work recorded; can fix mistakes before the deadline; late work not rejected; an existing submission is protected from replacement after D_e); Lecturer (a single current submission to mark); HoD (late penalties enforceable).
 - **Preconditions:** The student is authenticated (UC-01) and enrolled; the assignment exists; the current time is on or before the final acceptance cutoff (D_e + 72h).
 - **Trigger:** The student chooses to submit work for an assignment.
 - **Main success flow (on time):**
@@ -58,7 +58,7 @@ Three use cases are specified in full below, including **Submit Assignment** as 
   - *3a. Resubmission before D_e:* if a submission already exists and the timestamp ≤ D_e, the new submission **replaces** the previous one (FR-12a); state remains **Submitted**; no penalty.
   - *4a. First submission after D_e, within the cutoff, no earlier submission exists:* the system accepts the work, records its lateness `d = ceil((timestamp − D_e)/24h)`, and sets the state to **Late** (FR-12c). **No penalty is calculated here** — lateness is only recorded; the penalty is applied at marking (UC-08).
 - **Exception flows:**
-  - *E1. Existing on-time submission, attempt after D_e:* the system **refuses** the replacement and preserves the on-time submission, informing the student it will be marked without penalty (FR-12b, C7).
+  - *E1. Any existing submission (on-time or Late), attempt after D_e:* the system **refuses** the replacement and preserves the existing submission (FR-12b, C7). An on-time submission stands and is marked without penalty; an existing Late submission is likewise not replaced and keeps its recorded lateness `d`. A first Late submission is accepted only when no submission exists (step 4a).
   - *E2. Attempt after the final acceptance cutoff:* refused; if no submission exists, the assignment is recorded as not submitted and scored zero (FR-21).
   - *E3. Not enrolled / assignment not visible:* refused with an authorisation message (FR-02).
   - *E4. Invalid or empty content:* rejected and re-entered (FR-19).

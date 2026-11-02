@@ -15,23 +15,29 @@ loop each mark
   alt HoD changes mark
     HoD -> UI : adjust(markId, newValue, reason)
     UI -> MOD : adjust(hodId, markId, newValue, reason)
-    note over MOD : atomic transaction
+    note over MOD : BEGIN TRANSACTION (atomic)
     MOD -> MRepo : update(markId, newValue)
     MOD -> AUD : record(MODERATION_CHANGE, old, new, reason)
     MOD -> SRepo : setState(Moderated)
+    note over MOD : COMMIT (all three persist, or none)
   else HoD accepts unchanged
     HoD -> UI : accept(markId)
     UI -> MOD : accept(markId)
+    note over MOD : BEGIN TRANSACTION (atomic)
     MOD -> SRepo : setState(Moderated)
-    note right : no audit event
+    note right : no audit event; state transition still persists
+    note over MOD : COMMIT
   end
 end
 HoD -> UI : release(assignmentId)
 UI -> MOD : release(assignmentId)
 note over MOD
-  partial release: only submissions already in
-  Moderated state are released; others untouched
+  BEGIN TRANSACTION (atomic): partial release — only
+  submissions already in Moderated state are set to
+  Released in a single commit; no partial commit;
+  non-Moderated submissions are untouched
 end note
 MOD -> SRepo : setState(Released) for Moderated submissions
+note over MOD : COMMIT (eligible set released together, or none)
 MOD --> UI : released (visible to students)
 @enduml

@@ -94,7 +94,8 @@ CREATE TABLE audit_events (
     -- MODERATION_CHANGE require a non-empty, non-whitespace user-entered reason.
     CHECK (
         (event_type = 'INITIAL' AND reason = 'Initial mark entry')
-        OR (event_type IN ('CHANGE','MODERATION_CHANGE') AND length(trim(reason)) > 0)
+        OR (event_type IN ('CHANGE','MODERATION_CHANGE')
+             AND length(trim(reason, char(32)||char(9)||char(10)||char(13)||char(11)||char(12))) > 0)
     )
 );
 
