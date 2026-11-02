@@ -29,3 +29,9 @@ Each accepted requirement is traced to the design elements that realise it (clas
 | NFR-07 | UC-08, UC-12/13 | append-only audit; DB triggers | Fig 2 | audit_events |
 | NFR-09 | — | layered design; services testable via repository interfaces | Fig 2, 3 | — |
 | NFR-01, NFR-02, NFR-10 | — | indexes; CMake build | Fig 7 | idx_* |
+
+## CR1 (v1.1) traceability
+
+| Requirement | Use case | Design / code | Test |
+|---|---|---|---|
+| FR-22 class-wide extension | UC-20 | class_extensions table; AssignmentService::extendClass; effectiveDeadline() helper; SubmissionService/MarkingService | test_class_extension (6 cases) |

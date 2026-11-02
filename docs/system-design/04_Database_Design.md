@@ -82,3 +82,7 @@ Integrity highlights: `CHECK ((event_type='INITIAL') = (old_value IS NULL))` tie
 SQLite is an **embedded, serverless** database: its engine is compiled into the application, and the whole database is a single local file. The system therefore needs **no database server** — in particular, no PostgreSQL, MySQL or any separate SQL tool — to build, run or assess.
 
 `database/schema.sql` is a **design artefact for reading**. It is **not** run by hand: on first run the application creates its SQLite database file and applies this schema itself (built in Gate 3), so a marker runs only the compiled console application (via CMake and a C++17 compiler, the toolchain the brief mandates) and never executes any SQL or DDL. Every artefact in the repository — the reports (PDF), this documentation (Markdown) and all diagrams (PNG/SVG) — is viewable directly in the GitHub web interface without any additional software.
+
+## CR1 (v1.1) — class_extensions
+
+A `class_extensions` table (`assignment_id` PRIMARY KEY → `extended_deadline` TEXT) holds at most one class-wide extension per assignment. It is added by an idempotent `CREATE TABLE IF NOT EXISTS` migration so existing databases upgrade safely. The effective deadline for a student is computed as the latest of the base deadline, the class extension and the individual `extensions` row — a single function used by both submission acceptance and marking, so the two can never diverge.

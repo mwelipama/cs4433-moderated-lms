@@ -121,3 +121,11 @@ Three use cases are specified in full below, including **Submit Assignment** as 
 ## 4. Note on later gates
 
 These use cases provide the basis for the Gate 2 behavioural models: the **Submission state machine** (Submitted/Late/Marked/Moderated/Released, FR-18), the **swimlane activity diagram** (submission → marking with penalty → moderation → release), and the **sequence diagrams** for *Submit Assignment* (UC-10, on-time, late and refused-replacement paths) and *Moderate and Release Marks* (UC-12/13, with and without adjustment).
+
+## UC-20 Extend Class Deadline (CR1, v1.1)
+
+- **Actor:** Lecturer. **Precondition:** the lecturer is assigned to the assignment's course.
+- **Main flow:** the lecturer selects the assignment and enters a new class deadline; the system validates it and records one class extension for the assignment.
+- **Postcondition:** every enrolled student's effective deadline is recalculated as the latest of base, class and individual deadlines; the change applies to both submission acceptance and the late penalty.
+- **Exceptions:** E1 lecturer not assigned to the course → refused (authorisation); E2 invalid datetime → rejected.
+- **Precedence:** an individual extension still applies; where both exist the student keeps whichever deadline is later, so no student is ever made worse off by a class extension.

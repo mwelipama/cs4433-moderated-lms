@@ -9,6 +9,7 @@ class Database;
 class SchemaInitializer {
 public:
     static bool ensureSchema(Database& db); // true if the schema was created on this call
+    static void applyMigrations(Database& db); // idempotent upgrades for older databases
 };
 
 } // namespace lms

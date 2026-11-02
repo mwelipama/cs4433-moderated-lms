@@ -15,9 +15,10 @@ public:
 
     SubmissionService(ISubmissionRepository& submissions, IAssignmentRepository& assignments,
                       IEnrolmentRepository& enrolments, IExtensionRepository& extensions,
+                      IClassExtensionRepository& classExtensions,
                       IMarkRepository& marks, Clock& clock)
         : submissions_(submissions), assignments_(assignments), enrolments_(enrolments),
-          extensions_(extensions), marks_(marks), clock_(clock) {}
+          extensions_(extensions), classExtensions_(classExtensions), marks_(marks), clock_(clock) {}
 
     SubmitResult submit(const User& actor, int64_t assignmentId, const std::string& content);
     std::optional<Submission> myGet(const User& actor, int64_t assignmentId);
@@ -32,6 +33,7 @@ private:
     IAssignmentRepository& assignments_;
     IEnrolmentRepository& enrolments_;
     IExtensionRepository& extensions_;
+    IClassExtensionRepository& classExtensions_;
     IMarkRepository& marks_;
     Clock& clock_;
 };

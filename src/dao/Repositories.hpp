@@ -87,6 +87,13 @@ public:
     virtual std::optional<Extension> find(int64_t assignmentId, int64_t studentId) = 0;
 };
 
+class IClassExtensionRepository {
+public:
+    virtual ~IClassExtensionRepository() = default;
+    virtual void set(int64_t assignmentId, const std::string& extendedDeadline) = 0;  // insert or replace
+    virtual std::optional<std::string> find(int64_t assignmentId) = 0;                // the class deadline, if any
+};
+
 class ISubmissionRepository {
 public:
     virtual ~ISubmissionRepository() = default;

@@ -400,4 +400,22 @@ std::vector<AuditEvent> SqliteAuditRepository::listByMark(int64_t markId) {
     return out;
 }
 
+// ----------------------- Class-wide extensions --------------------
+
+void SqliteClassExtensionRepository::set(int64_t assignmentId, const std::string& extendedDeadline) {
+    Statement st = db_.prepare(
+        "INSERT INTO class_extensions(assignment_id, extended_deadline) VALUES(?,?) "
+        "ON CONFLICT(assignment_id) DO UPDATE SET extended_deadline=excluded.extended_deadline");
+    st.bind(1, assignmentId).bind(2, extendedDeadline);
+    st.step();
+}
+
+std::optional<std::string> SqliteClassExtensionRepository::find(int64_t assignmentId) {
+    Statement st = db_.prepare(
+        "SELECT extended_deadline FROM class_extensions WHERE assignment_id=?");
+    st.bind(1, assignmentId);
+    if (!st.step()) return std::nullopt;
+    return st.colText(0);
+}
+
 } // namespace lms

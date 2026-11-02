@@ -2,12 +2,16 @@
 #include "services/Validation.hpp"
 #include "domain/Errors.hpp"
 #include "infra/DateTime.hpp"
+#include "domain/Deadline.hpp"
+#include <optional>
 
 namespace lms {
 
 std::string SubmissionService::effectiveDeadline(const Assignment& a, int64_t studentId) {
-    auto ext = extensions_.find(a.id, studentId);
-    return ext ? ext->extendedDeadline : a.deadline;
+    auto indiv = extensions_.find(a.id, studentId);
+    std::optional<std::string> individualIso =
+        indiv ? std::optional<std::string>(indiv->extendedDeadline) : std::nullopt;
+    return lms::effectiveDeadline(a.deadline, classExtensions_.find(a.id), individualIso);
 }
 
 SubmissionService::SubmitResult SubmissionService::submit(const User& actor, int64_t assignmentId,

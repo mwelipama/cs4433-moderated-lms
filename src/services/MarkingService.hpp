@@ -18,10 +18,11 @@ public:
 
     MarkingService(ISubmissionRepository& submissions, IMarkRepository& marks,
                    IAssignmentRepository& assignments, ILecturerCourseRepository& lecturerCourses,
-                   IExtensionRepository& extensions, AuditService& audit,
-                   PenaltyPolicy& penaltyPolicy, Database& db)
+                   IExtensionRepository& extensions, IClassExtensionRepository& classExtensions,
+                   AuditService& audit, PenaltyPolicy& penaltyPolicy, Database& db)
         : submissions_(submissions), marks_(marks), assignments_(assignments),
-          lecturerCourses_(lecturerCourses), extensions_(extensions), audit_(audit),
+          lecturerCourses_(lecturerCourses), extensions_(extensions),
+          classExtensions_(classExtensions), audit_(audit),
           penaltyPolicy_(penaltyPolicy), db_(db) {}
 
     // changeReason is required only when a mark already exists (a re-mark).
@@ -36,6 +37,7 @@ private:
     IAssignmentRepository& assignments_;
     ILecturerCourseRepository& lecturerCourses_;
     IExtensionRepository& extensions_;
+    IClassExtensionRepository& classExtensions_;
     AuditService& audit_;
     PenaltyPolicy& penaltyPolicy_;
     Database& db_;
