@@ -58,19 +58,18 @@ This is the governing scheme. See Conflict #2 — it differs from the summary ta
 | P8 | CR1 (class-wide extensions) classification+impact; implement as **v1.1**; regression tests | None | **OPEN** | After v1.0 exists | `docs/maintenance/`, GitHub release |
 | PLE | Professional/legal/ethical analysis (Lesotho Data Protection Act 2012; privacy; security; fairness of late penalties; accessibility; accountability) | None | **OPEN** | Write with verified APA 7 citations | `docs/professional-practice/` |
 | X | Requirements Traceability Matrix: FR -> use case -> design (class/diagram/table) -> source file -> test case (brief sec.6, mandatory) | None | **OPEN** | Build and keep in sync across all gates | `docs/` + report appendix |
-| R | Final report + references + appendices | None | **OPEN** | Blocked by Conflict #1 (length) | `docs/final-report/` |
+| R | Final report + references + appendices | None | **OPEN** | Produce the 4–5 page report (condensed 14-section structure) linking to GitHub-hosted artefacts; consistent references; appendices (traceability matrix, full test results, user manuals, updated risk register) | `docs/final-report/` |
 
 **Headline:** Phase 1 (10 marks) is done and banked. The remaining **90 marks** are OPEN.
 
 ---
 
-## 4. Conflicts identified — decisions required
+## 4. Conflicts identified and owner decisions (settled)
 
-> Per the execution protocol, these are surfaced, not silently resolved.
+> These were surfaced for decision; the owner's decisions are now recorded and final.
 
-**Conflict #1 — Final report length (CRITICAL — needs your decision).**
-The official brief (sec.7) specifies **a single report of 6,000–8,000 words** (excluding diagrams/tables/appendices) in 14 prescribed sections. The lecturer's latest instruction (relayed) is **4–5 pages**. These are not reconcilable (6,000–8,000 words is roughly 12–20 pages).
-- *Recommendation:* obtain the 4–5 page instruction **in writing** from the lecturer, and clarify whether it **replaces** the 6,000–8,000-word report or sits alongside it. If 4–5 pages truly governs, adopt the concise-report + GitHub-evidence model: a tight 4–5 page report that references detailed SRS, design, test and evidence artefacts hosted in the repo — while still producing those full artefacts (the marks for P2–P8 depend on the artefacts, not the page count). I will **not** commit to a report format until you confirm.
+**Conflict #1 — Final report length (SETTLED by owner).**
+The official brief (sec.7) specifies a single report of 6,000–8,000 words in 14 prescribed sections. The lecturer's **latest instruction is 4–5 pages**, and the owner has ruled it **supersedes** the 6,000–8,000-word requirement for the final report. *Caveat:* retain the lecturer's 4–5 page instruction **in writing** if available, as evidence it supersedes the brief. The report therefore follows the **concise-report + GitHub-evidence model**: a tight 4–5 page report that keeps the required 14-section structure in condensed form and links to the full SRS, design, test and evidence artefacts hosted in the repo. The full artefacts are still produced — the P2–P8 marks depend on the artefacts, not the page count.
 
 **Conflict #2 — Mark weightings (resolve: official PDF governs).**
 The summary table in the working brief shows V&V **15**, "Deployment and Maintenance" combined **6**, Ethics **4**. The official PDF shows V&V **12**, Deployment **4** + Maintenance **6** (separate), Ethics **3**. Both sum to 100 but allocate effort differently. *Adopting the official PDF scheme* (sec.2 above) unless you say otherwise.
@@ -78,11 +77,11 @@ The summary table in the working brief shows V&V **15**, "Deployment and Mainten
 **Conflict #3 — Submission package.**
 Official PDF: one PDF report + Git link. Latest guidance: GitHub as the primary evidence store with a concise report. Reconciled under Decision #1; GitHub will hold all detailed evidence either way.
 
-**Conflict #4 — Console vs simple desktop GUI (minor — I will default).**
-The brief allows "console or simple desktop GUI". *Assumption, stated for approval:* build a **console** application — simplest to make robust offline, easiest to defend at the viva, and sufficient for full marks (the GUI you built for CS3400 is a separate module). Tell me if you want a Qt GUI instead; it adds scope without adding marks here.
+**Conflict #4 — Console vs simple desktop GUI (APPROVED: console).**
+The brief allows "console or simple desktop GUI". The owner has **approved a C++17 console application with SQLite — no Qt GUI**. Priorities: correctness, role enforcement, business rules, persistence, auditability, testing, and a demonstrable workflow for the mandatory viva.
 
-**Conflict #5 — Deadline/timeline.**
-The brief is dated 7 Nov 2026 with "7 weeks allowed"; the actual submission deadline governing our pace is not in the documents. Please confirm the real deadline so sequencing and any viva prep are realistic.
+**Conflict #5 — Deadline (SETTLED).**
+The final submission deadline is **2 November 2026**, per the latest lecturer update supplied by the owner (the brief is dated 7 Nov 2026 with "7 weeks allowed"; the 2 Nov date governs unless a later extension is received).
 
 ---
 
@@ -111,7 +110,7 @@ These are intrinsic to the case study and are Gate 1 (Requirements) work:
 
 Order follows the brief's Waterfall gates: **G1 Requirements -> G2 Design (lock) -> G3 Implementation -> G4 V&V -> G5 CM/QA -> G6 Deployment (v1.0) -> G7 Maintenance (v1.1) -> G8 Report + Ethics + traceability**. CM/QA groundwork (CI skeleton) can begin in parallel once there is code to build.
 
-**Blocking decision before Gate 1 output is finalised:** none — Gate 1 can proceed on the official brief. **Blocking before the report (Gate 8):** Conflict #1 (report length). I recommend resolving #1 early so artefacts are sized correctly, but it does not block G1.
+**Blocking decisions:** none outstanding — report length (4–5 pages), application type (C++17 console + SQLite) and deadline (2 Nov 2026) are all settled. Gate 1 can proceed on the official brief once this baseline is accepted.
 
 ---
 
