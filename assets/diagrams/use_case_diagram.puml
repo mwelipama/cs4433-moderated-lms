@@ -32,7 +32,7 @@ rectangle "Moderated LMS" {
   usecase "Moderate Marks" as MOD
   usecase "Release Marks\nto Students" as REL
   usecase "View Released\nMarks and Feedback" as VIEWM
-  usecase "Record Mark Change\n(audit log)" as AUDIT
+  usecase "Record Mark\nAudit Event" as AUDIT
 }
 
 U --> LOGIN
@@ -55,7 +55,7 @@ H --> REL
 
 MARK ..> FEED : <<include>>
 MARK ..> AUDIT : <<include>>
-MOD  ..> AUDIT : <<include>>
+AUDIT ..> MOD : <<extend>>
 RESUB ..> SUBMIT : <<extend>>
-LATE  ..> SUBMIT : <<extend>>
+LATE ..> MARK : <<extend>>
 @enduml

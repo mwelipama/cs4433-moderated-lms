@@ -2,16 +2,21 @@
 
 **System:** Moderated Learning Management System · **Author:** Mweli Pama (201404452)
 
+All quantitative rules (D_e, days late d, raw mark R, penalty P, awarded mark A, cutoff) follow Stakeholder Analysis Section 3 and are used identically here.
+
 ## 1. Use case diagram
 
-The diagram covers all four actors (Administrator, Lecturer, Head of Department, Student), each a specialisation of an abstract *User* (generalisation), and uses `<<include>>` and `<<extend>>` relationships.
+The diagram covers all four actors (Administrator, Lecturer, Head of Department, Student), each a specialisation of an abstract *User* (generalisation), with `<<include>>` and `<<extend>>` relationships.
 
 **Figure 1. Use Case Diagram** — [assets/diagrams/use_case_diagram.png](../../assets/diagrams/use_case_diagram.png) · source: [use_case_diagram.puml](../../assets/diagrams/use_case_diagram.puml)
 
-Relationships shown:
+**Relationships (and why each is modelled this way):**
 - **Generalisation:** Administrator, Lecturer, Head of Department and Student each generalise *User* (all authenticate via *Log in*).
-- **`<<include>>`:** *Mark Submission* includes *Write Feedback* and *Record Mark Change (audit)*; *Moderate Marks* includes *Record Mark Change (audit)*.
-- **`<<extend>>`:** *Resubmit before Deadline* and *Apply Late Penalty* extend *Submit Assignment* (conditional behaviour).
+- **`<<include>>` — *Mark Submission* includes *Write Feedback*:** feedback is always recorded when marking (FR-14).
+- **`<<include>>` — *Mark Submission* includes *Record Mark Audit Event*:** marking always writes an audit event — **INITIAL** on the first mark (empty old value) or **CHANGE** on a re-mark (FR-17). Because it always occurs, `<<include>>` is correct.
+- **`<<extend>>` — *Apply Late Penalty* extends *Mark Submission*:** lateness is *recorded* at submission, but the penalty is *calculated when the lecturer marks the submission* and only when the submission is Late. Conditional behaviour ⇒ `<<extend>>`.
+- **`<<extend>>` — *Record Mark Audit Event* extends *Moderate Marks*:** moderation writes an audit event **only when the HoD changes a mark**. A moderation that makes no change writes no audit event; its outcome is the submission's transition to the Moderated state. Conditional ⇒ `<<extend>>`.
+- **`<<extend>>` — *Resubmit before Deadline* extends *Submit Assignment*:** resubmission is an optional, conditional path of submitting (a prior submission exists and D_e has not passed).
 
 ## 2. Use case list
 
@@ -24,11 +29,11 @@ Relationships shown:
 | UC-05 | Enrol Student in Course | Administrator |
 | UC-06 | Create Assignment | Lecturer |
 | UC-07 | Grant Individual Extension | Lecturer |
-| UC-08 | Mark Submission (incl. Write Feedback, Record Mark Change) | Lecturer |
+| UC-08 | Mark Submission (incl. Write Feedback, Record Mark Audit Event; ext. Apply Late Penalty) | Lecturer |
 | UC-09 | View Courses and Assignments | Student |
-| UC-10 | Submit Assignment (ext. Resubmit, Apply Late Penalty) | Student |
+| UC-10 | Submit Assignment (ext. Resubmit before Deadline) | Student |
 | UC-11 | View Released Marks and Feedback | Student |
-| UC-12/13 | Moderate and Release Marks | Head of Department |
+| UC-12/13 | Moderate and Release Marks (ext. Record Mark Audit Event) | Head of Department |
 
 Three use cases are specified in full below, including **Submit Assignment** as required.
 
@@ -39,49 +44,51 @@ Three use cases are specified in full below, including **Submit Assignment** as 
 ### UC-10 — Submit Assignment
 
 - **Primary actor:** Student
-- **Stakeholders & interests:** Student (wants work recorded, able to fix mistakes before the deadline, late work not rejected); Lecturer (wants a single current submission to mark); HoD (wants late penalties enforced).
-- **Preconditions:** The student is authenticated (UC-01) and enrolled in the course; the assignment exists and is open; the student can see it (UC-09).
+- **Stakeholders & interests:** Student (work recorded; can fix mistakes before the deadline; late work not rejected; an on-time submission is protected); Lecturer (a single current submission to mark); HoD (late penalties enforceable).
+- **Preconditions:** The student is authenticated (UC-01) and enrolled; the assignment exists; the current time is on or before the final acceptance cutoff (D_e + 72h).
 - **Trigger:** The student chooses to submit work for an assignment.
-- **Main success flow:**
+- **Main success flow (on time):**
   1. The student selects an assignment from their list.
-  2. The system shows the assignment's maximum mark and effective deadline (extension if granted, else the assignment deadline — C5).
+  2. The system shows the maximum mark M and the effective deadline D_e (extension if granted, else the assignment deadline — C5).
   3. The student provides their submission content/reference.
-  4. The system records the submission, linked to the student and assignment, with a timestamp.
-  5. The system sets the submission state to **Submitted** (FR-18) and confirms success.
+  4. The system records the submission with the current timestamp, linked to the student and assignment.
+  5. As the timestamp ≤ D_e, the system sets the state to **Submitted** (FR-18) and confirms success.
 - **Alternative flows:**
-  - *2a. Extension exists:* the effective deadline shown is the student's individual extension (FR-09).
-  - *3a. Resubmission before the deadline:* if a submission already exists and the effective deadline has not passed, the new submission **replaces** the previous one (FR-12); state remains **Submitted**.
-  - *4a. Submission after the effective deadline (<< extend >> Apply Late Penalty):* the system accepts the work, records it, and sets the state to **Late**; lateness in started days (ceiling, C6) is stored for use at marking (FR-13). Work is never rejected (C2).
+  - *2a. Extension exists:* the D_e shown is the student's individual extension (FR-09).
+  - *3a. Resubmission before D_e:* if a submission already exists and the timestamp ≤ D_e, the new submission **replaces** the previous one (FR-12a); state remains **Submitted**; no penalty.
+  - *4a. First submission after D_e, within the cutoff, no earlier submission exists:* the system accepts the work, records its lateness `d = ceil((timestamp − D_e)/24h)`, and sets the state to **Late** (FR-12c). **No penalty is calculated here** — lateness is only recorded; the penalty is applied at marking (UC-08).
 - **Exception flows:**
-  - *E1. Not enrolled / assignment not visible:* the system refuses the submission with an authorisation message (FR-02).
-  - *E2. Invalid or empty content:* the system rejects the input and prompts again (FR-19).
-  - *E3. Data-access error:* the system catches the error, reports it, and leaves no partial submission (FR-19, NFR-06).
-- **Postconditions:** A single current submission exists for the student and assignment, in state **Submitted** or **Late**, with a timestamp and (if late) the recorded lateness. No mark is visible to the student (FR-16).
-- **Business rules:** C2 (accept late, penalise), C5 (effective deadline), C6 (started-day counting), FR-12 (latest replaces previous), FR-13 (penalty schedule).
+  - *E1. Existing on-time submission, attempt after D_e:* the system **refuses** the replacement and preserves the on-time submission, informing the student it will be marked without penalty (FR-12b, C7).
+  - *E2. Attempt after the final acceptance cutoff:* refused; if no submission exists, the assignment is recorded as not submitted and scored zero (FR-21).
+  - *E3. Not enrolled / assignment not visible:* refused with an authorisation message (FR-02).
+  - *E4. Invalid or empty content:* rejected and re-prompted (FR-19).
+  - *E5. Data-access error:* caught and reported; no partial submission (FR-19, NFR-06).
+- **Postconditions:** At most one current submission exists for the student and assignment, in state **Submitted** (on time) or **Late** (with recorded `d`); no penalty has yet been computed; no mark is visible to the student (FR-16).
+- **Business rules:** C2, C5, C6, C7; FR-12, FR-13 (penalty deferred to marking), FR-18, FR-21.
 
 ### UC-08 — Mark Submission
 
 - **Primary actor:** Lecturer
-- **Stakeholders & interests:** Lecturer (mark quickly, give feedback); Student (wants written feedback, not just a number); HoD/Principal (nothing visible to the student yet); school (every change audited).
+- **Stakeholders & interests:** Lecturer (mark quickly, give feedback); Student (written feedback, not just a number; correct penalty); HoD/Principal (nothing visible to the student yet); school (every mark-affecting action audited).
 - **Preconditions:** The lecturer is authenticated and assigned to the course; a submission exists for the assignment.
 - **Trigger:** The lecturer chooses to mark a submission.
 - **Main success flow:**
   1. The lecturer selects a submission to mark.
-  2. The system shows the submission, the maximum mark, and any recorded lateness.
-  3. The lecturer enters a numeric raw mark (0..maximum) and written feedback.
-  4. The system validates the mark range and that feedback is non-empty (FR-14).
-  5. If the submission is **Late**, the system applies the late-penalty rule to compute the awarded mark (FR-13; `<<include>>` the penalty calculation).
-  6. The system stores the awarded mark and feedback and sets the state to **Marked** (FR-18).
-  7. The system writes an audit record (acting lecturer, timestamp, old value → new value, reason) — `<<include>>` Record Mark Change (FR-17).
+  2. The system shows the submission, the maximum mark M, and the submission's state (Submitted or Late with its recorded `d`).
+  3. The lecturer enters a raw mark R (0..M) and written feedback.
+  4. The system validates R's range and that feedback is non-empty (FR-14).
+  5. **If the submission is Late, `<<extend>>` Apply Late Penalty:** the system computes `A = clamp(R − 0.10·M·d, 0, M)` rounded to the nearest whole mark (FR-13). If on time, `A = R`.
+  6. The system stores R, A and feedback and sets the state to **Marked** (FR-18).
+  7. **`<<include>>` Record Mark Audit Event:** on the first mark the system writes an **INITIAL** event (old value empty, new value A, acting lecturer, timestamp, reason); on a re-mark it writes a **CHANGE** event (old A → new A, reason) (FR-17).
   8. The mark remains invisible to the student until release (FR-16).
 - **Alternative flows:**
-  - *3a. Re-marking an already-marked submission:* permitted before release; step 7 records the change with the previous value as the old value.
+  - *3a. Re-marking an already-marked submission (before release):* permitted; step 7 writes a **CHANGE** event with the previous A as the old value.
 - **Exception flows:**
-  - *E1. Mark out of range or feedback empty:* rejected; the lecturer is prompted again (FR-14, FR-19).
+  - *E1. R out of range or feedback empty:* rejected and re-prompted (FR-14, FR-19).
   - *E2. Lecturer not assigned to the course:* refused (FR-02).
   - *E3. Data-access error:* caught and reported; no partial write (NFR-06).
-- **Postconditions:** The submission is in state **Marked** with an awarded mark and feedback; exactly one audit record exists for the change; the student still sees nothing (FR-16).
-- **Business rules:** FR-13 (penalty), FR-14 (range + feedback), FR-16 (no early visibility), FR-17 (audit).
+- **Postconditions:** The submission is **Marked** with raw mark R, awarded mark A and feedback; exactly one audit event (INITIAL or CHANGE) exists for this action; the student still sees nothing (FR-16).
+- **Business rules:** FR-13 (penalty at marking), FR-14 (range + feedback), FR-16 (no early visibility), FR-17 (INITIAL/CHANGE audit).
 
 ### UC-12/13 — Moderate and Release Marks
 
@@ -91,25 +98,25 @@ Three use cases are specified in full below, including **Submit Assignment** as 
 - **Trigger:** The HoD chooses to moderate the marks for an assignment or course in their department.
 - **Main success flow:**
   1. The HoD selects a department course and assignment.
-  2. The system lists the marked submissions with their awarded marks and feedback.
+  2. The system lists the marked submissions with their awarded marks A and feedback.
   3. The HoD reviews each mark.
-  4. For any mark requiring change, the HoD enters a new value and a reason; the system stores it and writes an audit record (`<<include>>` Record Mark Change, FR-15, FR-17) and sets the submission state to **Moderated** (FR-18).
-  5. When satisfied, the HoD **releases** the marks for the assignment.
-  6. The system sets the released submissions' state to **Released** and makes the marks and feedback visible to the affected students (FR-16).
-  7. The system confirms the release.
+  4. **For a mark the HoD changes:** the HoD enters a new value and a reason; the system stores it, and `<<extend>>` **Record Mark Audit Event** writes a **MODERATION_CHANGE** event (old A → new A, acting HoD, timestamp, reason) (FR-15, FR-17); the submission state becomes **Moderated** (FR-18).
+  5. **For a mark the HoD accepts unchanged:** the system sets the state to **Moderated** and writes **no** mark audit event — the moderation outcome is recorded by the state transition itself.
+  6. When satisfied, the HoD **releases** the marks for the assignment.
+  7. The system sets the released submissions' state to **Released** and makes the marks and feedback visible to the affected students (FR-16).
+  8. The system confirms the release.
 - **Alternative flows:**
-  - *4a. No change needed:* the HoD accepts the mark unchanged; the system sets the state to **Moderated** without an audit record (no value changed).
-  - *5a. Partial release:* the HoD releases only the submissions reviewed so far; the rest remain **Moderated**/**Marked**.
+  - *6a. Partial release:* the HoD releases only the submissions reviewed so far; the rest remain **Moderated** or **Marked**.
 - **Exception flows:**
   - *E1. Course outside the HoD's department:* access refused (FR-02).
-  - *E2. Attempt to release an unmarked submission:* rejected — only **Moderated** (or reviewed **Marked**) submissions may be released (FR-18).
+  - *E2. Attempt to release a submission not yet Moderated:* rejected — only Moderated submissions may be released (FR-18).
   - *E3. Adjusted mark out of range:* rejected and re-prompted (FR-14).
   - *E4. Data-access error:* caught and reported; no partial state change (NFR-06).
-- **Postconditions:** Reviewed submissions are **Moderated**; released submissions are **Released** and visible to students; every mark change has an audit record; unreleased marks remain invisible.
-- **Business rules:** C1 (marking separated from release), FR-15 (department-scoped moderation), FR-16 (controlled release), FR-17 (audit), FR-18 (valid lifecycle transitions).
+- **Postconditions:** Reviewed submissions are **Moderated** (every decision recorded by state, changes additionally audited); released submissions are **Released** and visible to students; unreleased marks remain invisible.
+- **Business rules:** C1 (marking separated from release), FR-15 (department-scoped moderation), FR-16 (controlled release), FR-17 (audit only on change; state records every decision), FR-18 (valid transitions).
 
 ---
 
 ## 4. Note on later gates
 
-These three use cases provide the basis for the Gate 2 behavioural models: the **Submission state machine** (FR-18 states), the **swimlane activity diagram** (submission → marking → moderation → release), and the **sequence diagrams** for *Submit Assignment* (UC-10, including late and resubmission) and *Moderate and Release Marks* (UC-12/13).
+These use cases provide the basis for the Gate 2 behavioural models: the **Submission state machine** (Submitted/Late/Marked/Moderated/Released, FR-18), the **swimlane activity diagram** (submission → marking with penalty → moderation → release), and the **sequence diagrams** for *Submit Assignment* (UC-10, on-time, late and refused-replacement paths) and *Moderate and Release Marks* (UC-12/13, with and without adjustment).
