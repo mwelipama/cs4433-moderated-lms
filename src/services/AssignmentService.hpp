@@ -20,6 +20,9 @@ public:
     void grantExtension(const User& actor, int64_t assignmentId, int64_t studentId,
                         const std::string& extendedDeadlineIso);
     std::vector<Assignment> listAssignments(const User& actor, int64_t courseId);
+    // Authorisation-enforcing listings for the read-only console paths:
+    std::vector<Assignment> listForStudent(const User& actor, int64_t courseId);
+    std::vector<Assignment> listForHod(const User& actor, int64_t courseId);
 
 private:
     void requireLecturerForCourse(const User& actor, int64_t courseId) const;

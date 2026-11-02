@@ -2,8 +2,9 @@
 
 #include <argon2.h>
 
+#include "infra/SecureRandom.hpp"
+
 #include <array>
-#include <random>
 #include <stdexcept>
 #include <vector>
 
@@ -13,11 +14,10 @@ namespace {
 constexpr size_t kSaltLen = 16;
 constexpr size_t kHashLen = 32;
 
-// 16 bytes of cryptographically-seeded randomness for the per-password salt.
+// 16 bytes from the operating system's cryptographically secure RNG for the salt.
 std::array<unsigned char, kSaltLen> makeSalt() {
     std::array<unsigned char, kSaltLen> salt{};
-    std::random_device rd;
-    for (auto& b : salt) b = static_cast<unsigned char>(rd() & 0xFF);
+    secureRandomBytes(salt.data(), salt.size());
     return salt;
 }
 } // namespace

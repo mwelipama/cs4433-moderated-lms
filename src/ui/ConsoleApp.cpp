@@ -319,9 +319,8 @@ void ConsoleApp::hodListCourses(User& user) {
 }
 
 void ConsoleApp::hodListAssignments(User& user) {
-    (void)user;
     const int64_t courseId = console::readId("Course id: ");
-    const auto assignments = svc_.assignmentRepo().listByCourse(courseId);
+    const auto assignments = svc_.assignments().listForHod(user, courseId);
     console::title("Assignments");
     if (assignments.empty()) { console::info("(none)"); return; }
     for (const auto& a : assignments)
@@ -400,9 +399,8 @@ void ConsoleApp::studentListCourses(User& user) {
 }
 
 void ConsoleApp::studentListAssignments(User& user) {
-    (void)user;
     const int64_t courseId = console::readId("Course id: ");
-    const auto assignments = svc_.assignmentRepo().listByCourse(courseId);
+    const auto assignments = svc_.assignments().listForStudent(user, courseId);
     console::title("Assignments");
     if (assignments.empty()) { console::info("(none)"); return; }
     for (const auto& a : assignments)

@@ -43,4 +43,22 @@ std::vector<Assignment> AssignmentService::listAssignments(const User& actor, in
     return assignments_.listByCourse(courseId);
 }
 
+std::vector<Assignment> AssignmentService::listForStudent(const User& actor, int64_t courseId) {
+    if (actor.role() != Role::Student)
+        throw AuthorizationError("only a student may use this listing");
+    if (!enrolments_.isEnrolled(courseId, actor.id()))
+        throw AuthorizationError("you are not enrolled in this course");
+    return assignments_.listByCourse(courseId);
+}
+
+std::vector<Assignment> AssignmentService::listForHod(const User& actor, int64_t courseId) {
+    if (actor.role() != Role::Hod)
+        throw AuthorizationError("only a Head of Department may use this listing");
+    auto course = courses_.findById(courseId);
+    if (!course) throw NotFoundError("no course with id " + std::to_string(courseId));
+    if (course->deptId != actor.departmentId())
+        throw AuthorizationError("this course is outside your department");
+    return assignments_.listByCourse(courseId);
+}
+
 } // namespace lms

@@ -13,7 +13,7 @@ CREATE TABLE departments (
 CREATE TABLE users (
     user_id       INTEGER PRIMARY KEY,
     username      TEXT    NOT NULL UNIQUE,
-    password_hash TEXT    NOT NULL,                 -- Argon2id PHC string (libsodium); embeds salt+params
+    password_hash TEXT    NOT NULL,                 -- Argon2id PHC string; embeds algorithm, params and per-user salt
     display_name  TEXT    NOT NULL,
     role          TEXT    NOT NULL CHECK (role IN ('ADMIN','LECTURER','HOD','STUDENT')),
     active        INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0,1)),

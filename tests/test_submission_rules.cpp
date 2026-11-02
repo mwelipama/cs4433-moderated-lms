@@ -100,3 +100,26 @@ TEST_CASE("An individual extension moves the effective deadline for that student
     auto r = env.submissionSvc.submit(*student, ids.assignmentId, "work within extension");
     CHECK(r.state == SubmissionState::Submitted);
 }
+
+TEST_CASE("Assignment listing is authorised in the service layer") {
+    TestEnv env;
+    auto ids = env.seedWorld();
+    // A student not enrolled in the course cannot list its assignments.
+    const int64_t outsiderId =
+        env.userAdmin.createUser(*env.admin, Role::Student, "outsider2", "password1", "Outsider");
+    auto outsider = env.userById(outsiderId);
+    CHECK_THROWS_AS(env.assignmentSvc.listForStudent(*outsider, ids.course), AuthorizationError);
+    // The enrolled student can.
+    auto student = env.userById(ids.studentId);
+    CHECK(env.assignmentSvc.listForStudent(*student, ids.course).size() == 1);
+
+    // A HoD of another department cannot list this course's assignments.
+    const int64_t otherDept = env.userAdmin.createDepartment(*env.admin, "Physics");
+    const int64_t otherHodId =
+        env.userAdmin.createUser(*env.admin, Role::Hod, "physhod", "password1", "Physics Head", otherDept);
+    auto otherHod = env.userById(otherHodId);
+    CHECK_THROWS_AS(env.assignmentSvc.listForHod(*otherHod, ids.course), AuthorizationError);
+    // The department's own HoD can.
+    auto hod = env.userById(ids.hodId);
+    CHECK(env.assignmentSvc.listForHod(*hod, ids.course).size() == 1);
+}

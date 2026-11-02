@@ -11,6 +11,7 @@ TEST_CASE("Argon2id hashing produces a verifiable PHC string") {
     CHECK(phc.rfind("$argon2id$", 0) == 0);           // PHC identifier for argon2id
     CHECK(hasher.verify(phc, "s3cret-password"));
     CHECK_FALSE(hasher.verify(phc, "wrong-password"));
+    CHECK(hasher.hash("s3cret-password") != phc);  // a fresh random salt each call
 }
 
 TEST_CASE("Login succeeds for valid credentials and fails otherwise") {
