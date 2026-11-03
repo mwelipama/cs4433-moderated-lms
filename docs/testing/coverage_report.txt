@@ -1,0 +1,52 @@
+Coverage (gcovr) — business-logic layer (services + domain):
+lines: 81.7% (403 out of 493)
+functions: 73.9% (68 out of 92)
+
+Per-file (src/):
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: .
+------------------------------------------------------------------------------
+File                                         Lines     Exec  Cover   Missing
+------------------------------------------------------------------------------
+src/dao/Repositories.hpp                        11       11   100%
+src/dao/SqliteRepositories.cpp                 321      264    82%   31,42,79-84,112,115-120,142,145-150,168-169,172-177,194-195,198-203,205-207,210-215,360-369
+src/dao/SqliteRepositories.hpp                  11       11   100%
+src/domain/Deadline.hpp                         12       11    91%   29
+src/domain/Entities.hpp                          3        3   100%
+src/domain/Enums.hpp                            39       33    84%   24,32,43,52,61,68
+src/domain/PenaltyPolicy.hpp                     1        1   100%
+src/domain/StandardPenaltyPolicy.cpp             9        9   100%
+src/domain/User.hpp                             21       16    76%   22,24,28-29,65
+src/domain/UserFactory.cpp                      14       12    85%   19,23
+src/infra/Argon2idPasswordHasher.cpp            25       23    92%   43-44
+src/infra/Clock.hpp                              1        1   100%
+src/infra/Database.cpp                          82       58    70%   10-14,41-42,50-51,58-60,62-67,69,74,106-109
+src/infra/Database.hpp                          33       24    72%   71,71,71-72,72,72-73,73,73
+src/infra/DateTime.cpp                          54       50    92%   33-36
+src/infra/PasswordHasher.hpp                     1        1   100%
+src/infra/SchemaInitializer.cpp                 14       12    85%   13-14
+src/infra/SecureRandom.cpp                       7        7   100%
+src/services/AssignmentService.cpp              52       41    78%   19,23,25,35,37,47,51-53,58,66
+src/services/AssignmentService.hpp               3        3   100%
+src/services/AuditService.cpp                   35       35   100%
+src/services/AuditService.hpp                    1        1   100%
+src/services/AuthService.cpp                     8        8   100%
+src/services/AuthService.hpp                     2        2   100%
+src/services/CourseService.cpp                  38       28    73%   9,18,21,28,32,39,43,47-49
+src/services/CourseService.hpp                   3        3   100%
+src/services/MarkingService.cpp                 51       36    70%   12,60-73
+src/services/MarkingService.hpp                  5        5   100%
+src/services/ModerationService.cpp              59       50    84%   9,49,69-75
+src/services/ModerationService.hpp               3        3   100%
+src/services/ServiceContainer.hpp               12        0     0%   53-59,62,64-66,70
+src/services/SubmissionService.cpp              57       50    87%   20,37,66-69,75
+src/services/SubmissionService.hpp               3        3   100%
+src/services/UserAdminService.cpp               45       33    73%   18,29-30,33,43,53,57-59,62-64
+src/services/UserAdminService.hpp                2        2   100%
+src/services/Validation.hpp                     15       15   100%
+src/ui/Console.cpp                              73        0     0%   17,19-24,26-27,29-33,35-40,42,44-47,50-52,67-71,73-80,82-83,85,87,89-95,98,100,102-108,111,113-117,120,122-126
+src/ui/ConsoleApp.cpp                          343        0     0%   10-15,17,21-24,26-28,30-34,36-38,41-45,47-54,56-61,63,67,69,79-81,83-92,94-98,101-105,107-113,115-121,123-127,129-132,134-136,138-145,147,149-154,156-163,165-172,174-180,182-189,193,195,203-205,207-214,216-220,223-229,231-239,241-248,250-256,258-263,265-273,275-286,290,292,299-301,303-309,311-315,318-324,326-328,330-338,340-352,354-360,362-366,368-372,376,378,384-386,388-393,395-399,402-408,410-421,423-428,431-432,434-442,444-450,452-454
+------------------------------------------------------------------------------
+TOTAL                                         1469      865    58%
+------------------------------------------------------------------------------

@@ -1,0 +1,4 @@
+cppcheck 2.13 — enable=warning,style,performance,portability, std=c++17
+Suppressions: useStlAlgorithm (intentional raw loops), missingIncludeSystem.
+
+RESULT: 0 findings.
