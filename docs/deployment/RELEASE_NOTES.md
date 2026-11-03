@@ -12,7 +12,7 @@ and quality-assurance pass (cppcheck clean, complexity metrics), the security an
 fixes (OS-CSPRNG salts, service-layer authorisation on all listing paths, impossible-date
 rejection, terminal-echo restoration, commit-time rollback), and the deployment artifacts.
 
-Tests: 38 cases / 112 assertions; 80.9% business-logic line coverage.
+Tests: 38 cases / 112 assertions; 81.7% business-logic line coverage.
 
 ## v1.0
 Initial release of the Moderated Learning Management System. Role-based access for
